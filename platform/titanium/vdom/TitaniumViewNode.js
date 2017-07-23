@@ -29,7 +29,7 @@ export default class TitaniumViewNode extends ElementNode {
 		if (this._titaniumView) {
 			return this._titaniumView;
 		}
-		console.log(`factory: ${this.tagName} ${this._titaniumViewFactory.name}(${this._createOptions})`);
+		console.log(`factory: ${this.tagName} ${this._titaniumViewFactory.name}(${JSON.stringify(this._createOptions)})`);
 		return this._titaniumView = this._titaniumViewFactory(this._createOptions);
 	}
 
@@ -53,13 +53,13 @@ export default class TitaniumViewNode extends ElementNode {
 		let setterName = 'set' + capitalize(propertyName);
 
 		if (this.titaniumView[setterName]) {
-			console.log(`setAttribute via setter: ${setterName}(${value})`);
+			console.log(`${this.toString()}.setAttribute via setter: ${setterName}(${JSON.stringify(value)})`);
 			this.titaniumView[setterName](value);
 			return;
 		}
 
 		if (this.titaniumView[propertyName]) {
-			console.log(`setAttribute via property: ${propertyName}(${value})`);
+			console.log(`${this.toString()}.setAttribute via property: ${propertyName}(${JSON.stringify(value)})`);
 			this.titaniumView[propertyName] = value;
 			return;
 		}
