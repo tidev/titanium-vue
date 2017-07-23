@@ -50,11 +50,11 @@ export function getViewMeta(tagName) {
 	let meta = defaultViewMeta;
 	const elementData = elements.get(tagName);
 
-	if (elementData && elementData.meta) {
-		meta = elementData.meta;
+	if (elementData === null) {
+		throw new Error(`No view with meta data registered for tag ${tagName}`);
 	}
 
-	return meta;
+	return elementData.meta;
 }
 
 /**
