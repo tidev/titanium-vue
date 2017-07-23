@@ -86,19 +86,34 @@ export function registerElement(tagName, createFactoryResolver, meta = {}) {
 	elements.set(tagName, elementData);
 }
 
-// Register all Titanium view as vdom elements here
+// Register all Titanium views as vdom elements here
 // Titanium views that need to be wrapped in a Vue component for easier usability
 // should be prefixed with titanium, so the component can expose them under their
 // original name
 /* global Ti */
-registerElement('button', () => Ti.UI.createButton);
-registerElement('label', () => Ti.UI.createLabel);
+registerElement('button', () => Ti.UI.createButton, {
+	type: Ti.UI.Button
+});
+registerElement('label', () => Ti.UI.createLabel, {
+	type: Ti.UI.Label
+});
+registerElement('titanium-list-section', () => Ti.UI.createListSection, {
+	type: Ti.UI.ListSection,
+	skipAddToDom: true
+});
+registerElement('titanium-list-view', () => Ti.UI.createListView, {
+	type: Ti.UI.ListView
+});
 registerElement('titanium-tab-group', () => Ti.UI.createTabGroup, {
-
+	type: Ti.UI.TabGroup
 });
 registerElement('titanium-tab', () => Ti.UI.createTab, {
-
+	type: Ti.UI.Tab
+});
+registerElement('view', () => Ti.UI.createView, {
+	type: Ti.UI.View
 });
 registerElement('window', () => Ti.UI.createWindow, {
+	type: Ti.UI.Window,
 	skipAddToDom: true
 });
