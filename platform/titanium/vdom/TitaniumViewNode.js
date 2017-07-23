@@ -52,13 +52,15 @@ export default class TitaniumViewNode extends ElementNode {
 		let propertyName = key;
 		let setterName = 'set' + capitalize(propertyName);
 
-		if (this.titaniumView[propertyName]) {
-			this.titaniumView[propertyName] = value;
+		if (this.titaniumView[setterName]) {
+			console.log(`setAttribute via setter: ${setterName}(${value})`);
+			this.titaniumView[setterName](value);
 			return;
 		}
 
-		if (this.titaniumView[setterName]) {
-			this.titaniumView[setterName](value);
+		if (this.titaniumView[propertyName]) {
+			console.log(`setAttribute via property: ${propertyName}(${value})`);
+			this.titaniumView[propertyName] = value;
 			return;
 		}
 
