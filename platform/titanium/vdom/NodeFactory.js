@@ -2,7 +2,7 @@ import CommentNode from './CommentNode';
 import ElementNode from './ElementNode';
 import TitaniumViewNode from './TitaniumViewNode';
 import TextNode from './TextNode';
-import { isKnownView } from '../element-registry';
+import { isTitaniumView } from '../element-registry';
 
 /**
  * Factory for creating the different vdom nodes
@@ -29,7 +29,7 @@ export default class NodeFactory {
 	 * @return {ElementNode|TitaniumViewNode}
 	 */
 	static createElement(tagName) {
-		if (isKnownView(tagName)) {
+		if (isTitaniumView(tagName)) {
 			return new TitaniumViewNode(tagName);
 		}  else {
 			return new ElementNode(tagName);

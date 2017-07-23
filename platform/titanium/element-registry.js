@@ -28,13 +28,13 @@ const defaultViewMeta = {
  * @return {Function} The view's create factory function
  */
 export function getTitaniumViewFactory(tagName) {
-	if (!elements.has(tagName)) {
-		throw new Error(`No component registerd for ${tagName}`);
+	if (!isTitaniumView(tagName)) {
+		throw new Error(`No titanium view registerd for ${tagName}`);
 	}
 
-	let componentData = elements.get(tagName);
+	let elementData = elements.get(tagName);
 	try {
-		return componentData.factoryResolver();
+		return elementData.factoryResolver();
 	} catch (e) {
 		throw new TypeError(`Could not load create factory for: ${tagName}. ${e}`);
 	}
@@ -47,10 +47,9 @@ export function getTitaniumViewFactory(tagName) {
  * @return {Object} Meta data object
  */
 export function getViewMeta(tagName) {
-	let meta = defaultViewMeta;
 	const elementData = elements.get(tagName);
 
-	if (elementData === null) {
+	if (elementData === undefined) {
 		throw new Error(`No view with meta data registered for tag ${tagName}`);
 	}
 
@@ -63,7 +62,7 @@ export function getViewMeta(tagName) {
  * @param {string} tagName Tag name to check
  * @return {Boolean} True if there is a Titanium view for the tag, false if not
  */
-export function isKnownView(tagName) {
+export function isTitaniumView(tagName) {
 	return elements.has(tagName);
 }
 
