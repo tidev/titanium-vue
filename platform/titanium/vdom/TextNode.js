@@ -1,7 +1,7 @@
 import VirtualDomNode from './VirtualDomNode';
 
 /**
- * A test node in our vdom
+ * A test node in the vdom
  */
 export default class TextNode extends VirtualDomNode {
 

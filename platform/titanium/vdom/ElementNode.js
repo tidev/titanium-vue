@@ -1,10 +1,7 @@
 import VirtualDomNode from './VirtualDomNode';
 
 /**
- * Element node in our vdom
- *
- * @TODO Merge this with TitaniumViewNode? All elements in our vdom should be
- * Titanium views anyway.
+ * General element node in the vdom
  */
 export default class ElementNode extends VirtualDomNode {
 	constructor(tagName) {
