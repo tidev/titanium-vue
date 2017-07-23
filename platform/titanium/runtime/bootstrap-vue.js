@@ -3,14 +3,12 @@ import {mountComponent} from 'core/instance/lifecycle.js';
 import {warn} from 'core/util/debug';
 import CommentNode from '../vdom/CommentNode';
 import DocumentNode from '../vdom/DocumentNode';
-//import platformDirectives from './directives/index';
 import platformComponents from './components/index';
 import {patch} from './patch';
 import {compileToFunctions} from '../compiler/index';
 
 Vue.prototype.$document = new DocumentNode();
 
-//Vue.options.directives = platformDirectives;
 Vue.options.components = platformComponents;
 
 Vue.prototype.__patch__ = patch;
