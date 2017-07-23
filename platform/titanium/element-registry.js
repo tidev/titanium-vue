@@ -78,6 +78,7 @@ export function registerElement(tagName, createFactoryResolver, meta = {}) {
 		throw new Error(`Element ${tagName} already registered.`);
 	}
 
+	console.log(meta);
 	let elementData = {
 		factoryResolver: createFactoryResolver,
 		meta: Object.assign({}, defaultViewMeta, meta)
@@ -91,28 +92,28 @@ export function registerElement(tagName, createFactoryResolver, meta = {}) {
 // original name
 /* global Ti */
 registerElement('button', () => Ti.UI.createButton, {
-	type: Ti.UI.Button
+	type: 'Ti.UI.Button'
 });
 registerElement('label', () => Ti.UI.createLabel, {
-	type: Ti.UI.Label
+	type: 'Ti.UI.Label'
 });
 registerElement('titanium-list-section', () => Ti.UI.createListSection, {
-	type: Ti.UI.ListSection,
+	type: 'Ti.UI.ListSection',
 	skipAddToDom: true
 });
 registerElement('titanium-list-view', () => Ti.UI.createListView, {
-	type: Ti.UI.ListView
+	type: 'Ti.UI.ListView'
 });
 registerElement('titanium-tab-group', () => Ti.UI.createTabGroup, {
-	type: Ti.UI.TabGroup
+	type: 'Ti.UI.TabGroup'
 });
 registerElement('titanium-tab', () => Ti.UI.createTab, {
-	type: Ti.UI.Tab
+	type: 'Ti.UI.Tab'
 });
 registerElement('view', () => Ti.UI.createView, {
-	type: Ti.UI.View
+	type: 'Ti.UI.View'
 });
 registerElement('window', () => Ti.UI.createWindow, {
-	type: Ti.UI.Window,
+	type: 'Ti.UI.Window',
 	skipAddToDom: true
 });
