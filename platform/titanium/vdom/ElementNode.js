@@ -1,6 +1,4 @@
-import TitaniumViewNode from './TitaniumViewNode';
 import VirtualDomNode from './VirtualDomNode';
-import {getTitaniumViewFactory} from '../element-registry';
 
 /**
  * Element node in our vdom
@@ -8,31 +6,22 @@ import {getTitaniumViewFactory} from '../element-registry';
  * @TODO Merge this with TitaniumViewNode? All elements in our vdom should be
  * Titanium views anyway.
  */
-export default class ElementNode extends TitaniumViewNode {
+export default class ElementNode extends VirtualDomNode {
 	constructor(tagName) {
 		super();
 
 		this.nodeType = VirtualDomNode.NODE_TYPE_ELEMENT;
 		this.tagName = tagName;
-
-		let titaniumViewFactory = getTitaniumViewFactory(tagName);
-		this._titaniumView = titaniumViewFactory();
+		this.attributes = new Map();
+		this.styles = new Map();
 	}
 
-	appendChild(childNode) {
-		super.appendChild(childNode);
-
-		if (childNode.nodeType === VirtualDomNode.NODE_TYPE_TEXT) {
-			this.setText(childNode.text);
-		}
+	setAttribute(key, value) {
+		this.attributes.set(key, value);
 	}
 
-	removeChild(childNode) {
-		super.removeChild(childNode);
-
-		if (childNode.nodeType === VirtualDomNode.NODE_TYPE_TEXT) {
-			this.setText('');
-		}
+	setStyle(property, value) {
+		this.styles.set(property, value);
 	}
 
 }

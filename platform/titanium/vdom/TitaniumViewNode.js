@@ -1,26 +1,43 @@
 import VirtualDomNode from './VirtualDomNode';
-import {getViewMeta} from '../element-registry';
-import {capitalize} from 'shared/util';
+import ElementNode from './ElementNode';
+import { getTitaniumViewFactory, getViewMeta } from '../element-registry';
+import { capitalize } from 'shared/util';
 
 /**
  * A node in the vdom that represents a Titanium view
  */
-export default class TitaniumViewNode extends VirtualDomNode {
+export default class TitaniumViewNode extends ElementNode {
 
 	/**
 	 * Constructs a new Titanium view node
 	 */
-	constructor() {
-		super();
+	constructor(tagName) {
+		super(tagName);
 
-		this._titaniumView = null;
 		this._meta = null;
+		this._titaniumViewFactory = getTitaniumViewFactory(tagName);
+		this._titaniumView = null;
+		this._createOptions = {};
 	}
 
+	/**
+	 * Gets the underlying Titanium view
+	 *
+	 * @return {Object} Titanium view instance
+	 */
 	get titaniumView() {
-		return this._titaniumView;
+		if (this._titaniumView) {
+			return this._titaniumView;
+		}
+		console.log(`factory: ${this.tagName} ${this._titaniumViewFactory.name}(${this._createOptions})`);
+		return this._titaniumView = this._titaniumViewFactory(this._createOptions);
 	}
 
+	/**
+	 * Gets the meta data associated with this Titanium view
+	 *
+	 * @return {Object} Meta data object
+	 */
 	get meta() {
 		if (this._meta) {
 			return this._meta;
@@ -30,6 +47,8 @@ export default class TitaniumViewNode extends VirtualDomNode {
 	}
 
 	setAttribute(key, value) {
+		super.setAttribute(key, value);
+
 		let propertyName = key;
 		let setterName = 'set' + capitalize(propertyName);
 
@@ -52,6 +71,8 @@ export default class TitaniumViewNode extends VirtualDomNode {
 	}
 
 	setStyle(property, value) {
+		super.setStyle(property, value);
+
 		if (!(value = value.trim()).length) {
 			return;
 		}
@@ -74,6 +95,10 @@ export default class TitaniumViewNode extends VirtualDomNode {
 	appendChild(childNode) {
 		super.appendChild(childNode);
 
+		if (childNode.nodeType === VirtualDomNode.NODE_TYPE_TEXT) {
+			this.setText(childNode.text);
+		}
+
 		if (!(childNode instanceof TitaniumViewNode)) {
 			return;
 		}
@@ -91,6 +116,10 @@ export default class TitaniumViewNode extends VirtualDomNode {
 	removeChild(childNode) {
 		super.removeChild(childNode);
 
+		if (childNode.nodeType === VirtualDomNode.NODE_TYPE_TEXT) {
+			this.setText('');
+		}
+
 		let parentView = this.titaniumView;
 		let childView = childNode.titaniumView;
 
@@ -103,5 +132,9 @@ export default class TitaniumViewNode extends VirtualDomNode {
 
 	removeEventListener(event) {
 		this.titaniumView.removeEventListener(event);
+	}
+
+	toTemplate() {
+
 	}
 }

@@ -1,27 +1,25 @@
 /* eslint-disable no-console */
 
-import CommentNode from '../vdom/CommentNode';
-import ElementNode from '../vdom/ElementNode';
-import TextNode from '../vdom/TextNode';
+import NodeFactory from '../vdom/NodeFactory';
 
 export function createElement(tagName) {
 	console.log(`{TitaniumVue} -> createElement(${tagName})`);
-	return new ElementNode(tagName);
+	return NodeFactory.createElement(tagName);
 }
 
 export function createElementNS(namespace, tagName) {
-	console.log(`{TitaniumVue} -> createElementNS(${namespace}#${tagName})`);
-	return new ElementNode(`${namespace}:${tagName}`);
+	console.log(`{TitaniumVue} -> createElementNS(${namespace}, ${tagName})`);
+	return NodeFactory.createElementNS(namespace, tagName);
 }
 
 export function createTextNode(text) {
 	console.log(`{TitaniumVue} -> createTextNode(${text})`);
-	return new TextNode(text);
+	return NodeFactory.createTextNode(text);
 }
 
 export function createComment(text) {
 	console.log(`{TitaniumVue} -> createComment(${text})`);
-	return new CommentNode(text);
+	return NodeFactory.createComment(text);
 }
 
 export function appendChild(node, child) {
@@ -40,17 +38,17 @@ export function insertBefore(parentNode, newNode, referenceNode) {
 }
 
 export function parentNode(node) {
-	console.log(`{TitaniumVue} -> parentNode(${node})`);
+	console.log(`{TitaniumVue} -> parentNode(${node}) -> ${node.parentNode}`);
 	return node.parentNode;
 }
 
 export function nextSibling(node) {
-	console.log(`{TitaniumVue} -> pextSibling(${node})`);
+	console.log(`{TitaniumVue} -> nextSibling(${node}) -> ${node.nextSibling}`);
 	return node.nextSibling;
 }
 
 export function tagName(elementNode) {
-	console.log(`{TitaniumVue} -> tagName(${elementNode})`);
+	console.log(`{TitaniumVue} -> tagName(${elementNode}) -> ${elementNode.tagName}`);
 	return elementNode.tagName;
 }
 
