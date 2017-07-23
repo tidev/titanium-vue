@@ -1,5 +1,5 @@
 export default {
-	name: 'tab-goup',
+	name: 'tab-group',
 
 	props: ['selectedTab'],
 
