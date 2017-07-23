@@ -8,9 +8,6 @@ export default {
 	props: {
 		items: {
 			type: Array
-		},
-		template: {
-			type: String
 		}
 	},
 
@@ -21,7 +18,7 @@ export default {
 	},
 
 	mounted() {
-		this.$refs.listSection.setAttribute('items', this.items)
+		this.$refs.listSection.setAttribute('items', this.items);
 		this.$parent.appendSection(this.$refs.listSection.titaniumView);
 	},
 };

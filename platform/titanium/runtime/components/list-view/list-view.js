@@ -13,15 +13,17 @@ export default {
 		}
 	},
 
+	created() {
+		this.templates = {};
+	},
+
+	mounted() {
+		this.$el.setAttribute('templates', this.templates);
+	},
+
 	methods: {
 		addTemplate(templateName, template) {
-			console.log('addTemplate');
-			
-			/*
-			let templates = this.$refs.listView.titaniumView.templates || {};
-			templates[templateName] = template;
-			this.$refs.listView.titaniumView.setTemplates(templates);
-			*/
+			this.templates[templateName] = template;
 		},
 		appendSection(section) {
 			this.$refs.listView.titaniumView.appendSection(section);
