@@ -90,29 +90,106 @@ export function registerElement(tagName, createFactoryResolver, meta = {}) {
 // Titanium views that need to be wrapped in a Vue component for easier usability
 // should be prefixed with titanium, so the component can expose them under their
 // original name
+
 /* global Ti */
+
+registerElement('activity-indicator', () => Ti.UI.createActivityIndicator, {
+	type: Ti.UI.ActivityIndicator
+});
+
 registerElement('button', () => Ti.UI.createButton, {
 	type: Ti.UI.Button
 });
+
+registerElement('button-bar', () => Ti.UI.createButtonBar, {
+	type: Ti.UI.ButtonBar
+});
+
+registerElement('cover-flow-view', () => Ti.UI.createCoverFlowView, {
+	type: Ti.UI.CoverFlowView,
+});
+
+registerElement('dashboard-item', () => Ti.UI.createDashboardItem, {
+	type: Ti.UI.DashboardItem,
+});
+
+registerElement('dashboard-view', () => Ti.UI.createDashboardView, {
+	type: Ti.UI.DashboardView,
+});
+
+registerElement('image-view', () => Ti.UI.createImageView, {
+	type: Ti.UI.ImageView
+});
+
 registerElement('label', () => Ti.UI.createLabel, {
 	type: Ti.UI.Label
 });
+
+registerElement('picker', () => Ti.UI.createPicker, {
+	type: Ti.UI.Picker
+});
+
+registerElement('progress-bar', () => Ti.UI.createProgressBar, {
+	type: Ti.UI.ProgressBar
+});
+
+registerElement('refresh-control', () => Ti.UI.createRefreshControl, {
+	type: Ti.UI.RefreshControl
+});
+
+registerElement('scrollable-view', () => Ti.UI.createScrollableView, {
+	type: Ti.UI.ScrollableView
+});
+
+registerElement('search-bar', () => Ti.UI.createSearchBar, {
+	type: Ti.UI.SearchBar
+});
+
+registerElement('slider', () => Ti.UI.createSlider, {
+	type: Ti.UI.Slider
+});
+
+registerElement('switch', () => Ti.UI.createSwitch, {
+	type: Ti.UI.Switch
+});
+
+registerElement('text-area', () => Ti.UI.createTextArea, {
+	type: Ti.UI.TextArea
+});
+
+registerElement('text-field', () => Ti.UI.createTextField, {
+	type: Ti.UI.TextField
+});
+
+registerElement('titanium-list-view', () => Ti.UI.createListView, {
+	type: Ti.UI.ListView
+});
+
 registerElement('titanium-list-section', () => Ti.UI.createListSection, {
 	type: Ti.UI.ListSection,
 	skipAddToDom: true
 });
-registerElement('titanium-list-view', () => Ti.UI.createListView, {
-	type: Ti.UI.ListView
-});
+
 registerElement('titanium-tab-group', () => Ti.UI.createTabGroup, {
 	type: Ti.UI.TabGroup
 });
+
 registerElement('titanium-tab', () => Ti.UI.createTab, {
 	type: Ti.UI.Tab
 });
+
+registerElement('toolbar', () => Ti.UI.createToolbar, {
+	type: Ti.UI.Toolbar
+});
+
 registerElement('view', () => Ti.UI.createView, {
 	type: Ti.UI.View
 });
+
+registerElement('web-view', () => Ti.UI.createWebView, {
+	type: Ti.UI.WebView
+});
+
 registerElement('window', () => Ti.UI.createWindow, {
 	type: Ti.UI.Window,
 	skipAddToDom: true
