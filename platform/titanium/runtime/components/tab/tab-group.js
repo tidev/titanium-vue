@@ -3,7 +3,11 @@ export default {
 
 	props: ['selectedTab'],
 
-	template: `<titanium-tab-group ref="tabGroup" v-model="selectedIndex"><slot></slot></titanium-tab-group>`,
+	template: `
+		<titanium-tab-group ref="tabGroup" v-model="selectedIndex">
+			<slot></slot>
+		</titanium-tab-group>
+	`,
 
 	data() {
 		return {
