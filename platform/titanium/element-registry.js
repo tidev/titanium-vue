@@ -169,9 +169,7 @@ registerElement('titanium-list-section', () => Ti.UI.createListSection, {
 	type: 'Ti.UI.ListSection',
 	skipAddToDom: true
 });
-registerElement('titanium-list-view', () => Ti.UI.createListView, {
-	type: 'Ti.UI.ListView'
-});
+
 registerElement('titanium-tab-group', () => Ti.UI.createTabGroup, {
 	type: 'Ti.UI.TabGroup'
 });

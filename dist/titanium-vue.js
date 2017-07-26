@@ -592,6 +592,7 @@ function handleError(err, vm, info) {
 
 /* globals MutationObserver */
 
+// can we use __proto__?
 var hasProto = '__proto__' in {};
 
 // Browser environment sniffing
@@ -809,11 +810,6 @@ var Dep = function () {
   }]);
   return Dep;
 }();
-
-// the current target watcher being evaluated.
-// this is globally unique because there could be only one
-// watcher being evaluated at any time.
-
 
 Dep.target = null;
 var targetStack = [];
@@ -1097,6 +1093,11 @@ function dependArray(value) {
   }
 }
 
+/**
+ * Option overwriting strategies are functions that handle
+ * how to merge a parent option value and a child option
+ * value into the final value.
+ */
 var strats = config.optionMergeStrategies;
 
 /**
@@ -1793,6 +1794,18 @@ function checkProp(res, hash, key, altKey, preserve) {
   return false;
 }
 
+// The template compiler attempts to minimize the need for normalization by
+// statically analyzing the template at compile time.
+//
+// For plain HTML markup, normalization can be completely skipped because the
+// generated render function is guaranteed to return Array<VNode>. There are
+// two cases where extra normalization is needed:
+
+// 1. When the children contains components - because a functional component
+// may return an Array instead of a single root. In this case, just a simple
+// normalization is needed - if any child is an Array, we flatten the whole
+// thing with Array.prototype.concat. It is guaranteed to be only 1-level deep
+// because functional components already normalize their own children.
 function simpleNormalizeChildren(children) {
   for (var i = 0; i < children.length; i++) {
     if (Array.isArray(children[i])) {
@@ -2740,13 +2753,6 @@ var Watcher = function () {
   return Watcher;
 }();
 
-/**
- * Recursively traverse an object to evoke all converted
- * getters, so that every nested property inside the object
- * is collected as a "deep" dependency.
- */
-
-
 var seenObjects = new _Set();
 function traverse(val) {
   seenObjects.clear();
@@ -3114,6 +3120,7 @@ function mergeProps(to, from) {
   }
 }
 
+// hooks to be invoked on component VNodes during patch
 var componentVNodeHooks = {
   init: function init(vnode, hydrating, parentElm, refElm) {
     if (!vnode.componentInstance || vnode.componentInstance._isDestroyed) {
@@ -3378,6 +3385,9 @@ function applyNS(vnode, ns) {
   }
 }
 
+/**
+ * Runtime helper for rendering v-for lists.
+ */
 function renderList(val, render) {
   var ret = void 0,
       i = void 0,
@@ -3408,6 +3418,9 @@ function renderList(val, render) {
   return ret;
 }
 
+/**
+ * Runtime helper for rendering <slot>
+ */
 function renderSlot(name, fallback, props, bindObject) {
   var scopedSlotFn = this.$scopedSlots[name];
   if (scopedSlotFn) {
@@ -3428,10 +3441,16 @@ function renderSlot(name, fallback, props, bindObject) {
   }
 }
 
+/**
+ * Runtime helper for resolving filters
+ */
 function resolveFilter(id) {
   return resolveAsset(this.$options, 'filters', id, true) || identity;
 }
 
+/**
+ * Runtime helper for checking keyCodes from config.
+ */
 function checkKeyCodes(eventKeyCode, key, builtInAlias) {
   var keyCodes = config.keyCodes[key] || builtInAlias;
   if (Array.isArray(keyCodes)) {
@@ -3441,6 +3460,9 @@ function checkKeyCodes(eventKeyCode, key, builtInAlias) {
   }
 }
 
+/**
+ * Runtime helper for merging v-bind="object" into a VNode's data.
+ */
 function bindObjectProps(data, tag, value, asProp) {
   if (value) {
     if (!isObject(value)) {
@@ -3466,6 +3488,9 @@ function bindObjectProps(data, tag, value, asProp) {
   return data;
 }
 
+/**
+ * Runtime helper for rendering static trees.
+ */
 function renderStatic(index, isInFor) {
   var tree = this._staticTrees[index];
   // if has already-rendered static tree and not inside v-for,
@@ -4072,13 +4097,13 @@ var defaultViewMeta = {
  * @return {Function} The view's create factory function
  */
 function getTitaniumViewFactory(tagName) {
-	if (!elements.has(tagName)) {
-		throw new Error('No component registerd for ' + tagName);
+	if (!isTitaniumView(tagName)) {
+		throw new Error('No titanium view registerd for ' + tagName);
 	}
 
-	var componentData = elements.get(tagName);
+	var elementData = elements.get(tagName);
 	try {
-		return componentData.factoryResolver();
+		return elementData.factoryResolver();
 	} catch (e) {
 		throw new TypeError('Could not load create factory for: ' + tagName + '. ' + e);
 	}
@@ -4091,14 +4116,13 @@ function getTitaniumViewFactory(tagName) {
  * @return {Object} Meta data object
  */
 function getViewMeta(tagName) {
-	var meta = defaultViewMeta;
 	var elementData = elements.get(tagName);
 
-	if (elementData && elementData.meta) {
-		meta = elementData.meta;
+	if (elementData === undefined) {
+		throw new Error('No view with meta data registered for tag ' + tagName);
 	}
 
-	return meta;
+	return elementData.meta;
 }
 
 /**
@@ -4107,7 +4131,9 @@ function getViewMeta(tagName) {
  * @param {string} tagName Tag name to check
  * @return {Boolean} True if there is a Titanium view for the tag, false if not
  */
-
+function isTitaniumView(tagName) {
+	return elements.has(tagName);
+}
 
 /**
  * Registers a Titanium UI view as a new element
@@ -4123,6 +4149,7 @@ function registerElement(tagName, createFactoryResolver) {
 		throw new Error('Element ' + tagName + ' already registered.');
 	}
 
+	console.log(meta);
 	var elementData = {
 		factoryResolver: createFactoryResolver,
 		meta: Object.assign({}, defaultViewMeta, meta)
@@ -4130,123 +4157,269 @@ function registerElement(tagName, createFactoryResolver) {
 	elements.set(tagName, elementData);
 }
 
-// Register all Titanium view as vdom elements here
+// Register all Titanium views as vdom elements here
 // Titanium views that need to be wrapped in a Vue component for easier usability
 // should be prefixed with titanium, so the component can expose them under their
 // original name
+
 /* global Ti */
+
+registerElement('activity-indicator', function () {
+	return Ti.UI.createActivityIndicator;
+}, {
+	type: 'Ti.UI.ActivityIndicator'
+});
+
 registerElement('button', function () {
 	return Ti.UI.createButton;
+}, {
+	type: 'Ti.UI.Button'
 });
+
+registerElement('button-bar', function () {
+	return Ti.UI.createButtonBar;
+}, {
+	type: 'Ti.UI.ButtonBar'
+});
+
+registerElement('cover-flow-view', function () {
+	return Ti.UI.createCoverFlowView;
+}, {
+	type: 'Ti.UI.CoverFlowView'
+});
+
+registerElement('dashboard-item', function () {
+	return Ti.UI.createDashboardItem;
+}, {
+	type: 'Ti.UI.DashboardItem'
+});
+
+registerElement('dashboard-view', function () {
+	return Ti.UI.createDashboardView;
+}, {
+	type: 'Ti.UI.DashboardView'
+});
+
+registerElement('image-view', function () {
+	return Ti.UI.createImageView;
+}, {
+	type: 'Ti.UI.ImageView'
+});
+
 registerElement('label', function () {
 	return Ti.UI.createLabel;
-});
-registerElement('titanium-tab-group', function () {
-	return Ti.UI.createTabGroup;
-}, {});
-registerElement('titanium-tab', function () {
-	return Ti.UI.createTab;
-}, {});
-registerElement('window', function () {
-	return Ti.UI.createWindow;
 }, {
+	type: 'Ti.UI.Label'
+});
+
+registerElement('picker', function () {
+	return Ti.UI.createPicker;
+}, {
+	type: 'Ti.UI.Picker'
+});
+
+registerElement('progress-bar', function () {
+	return Ti.UI.createProgressBar;
+}, {
+	type: 'Ti.UI.ProgressBar'
+});
+
+registerElement('refresh-control', function () {
+	return Ti.UI.createRefreshControl;
+}, {
+	type: 'Ti.UI.RefreshControl'
+});
+
+registerElement('scrollable-view', function () {
+	return Ti.UI.createScrollableView;
+}, {
+	type: 'Ti.UI.ScrollableView'
+});
+
+registerElement('search-bar', function () {
+	return Ti.UI.createSearchBar;
+}, {
+	type: 'Ti.UI.SearchBar'
+});
+
+registerElement('slider', function () {
+	return Ti.UI.createSlider;
+}, {
+	type: 'Ti.UI.Slider'
+});
+
+registerElement('switch', function () {
+	return Ti.UI.createSwitch;
+}, {
+	type: 'Ti.UI.Switch'
+});
+
+registerElement('text-area', function () {
+	return Ti.UI.createTextArea;
+}, {
+	type: 'Ti.UI.TextArea'
+});
+
+registerElement('text-field', function () {
+	return Ti.UI.createTextField;
+}, {
+	type: 'Ti.UI.TextField'
+});
+
+registerElement('titanium-list-view', function () {
+	return Ti.UI.createListView;
+}, {
+	type: 'Ti.UI.ListView'
+});
+
+registerElement('titanium-list-section', function () {
+	return Ti.UI.createListSection;
+}, {
+	type: 'Ti.UI.ListSection',
 	skipAddToDom: true
 });
 
+registerElement('titanium-tab-group', function () {
+	return Ti.UI.createTabGroup;
+}, {
+	type: 'Ti.UI.TabGroup'
+});
+
+registerElement('titanium-tab', function () {
+	return Ti.UI.createTab;
+}, {
+	type: 'Ti.UI.Tab'
+});
+
+registerElement('toolbar', function () {
+	return Ti.UI.createToolbar;
+}, {
+	type: 'Ti.UI.Toolbar'
+});
+
+registerElement('view', function () {
+	return Ti.UI.createView;
+}, {
+	type: 'Ti.UI.View'
+});
+
+registerElement('web-view', function () {
+	return Ti.UI.createWebView;
+}, {
+	type: 'Ti.UI.WebView'
+});
+
+registerElement('window', function () {
+	return Ti.UI.createWindow;
+}, {
+	type: 'Ti.UI.Window',
+	skipAddToDom: true
+});
+
+/**
+ * Base class for all nodes in our virtual dom
+ */
+
 var VirtualDomNode = function () {
 
-  /**
-   * Constructs a new vdom node
+	/**
+  * Constructs a new vdom node
+  */
+	function VirtualDomNode() {
+		classCallCheck(this, VirtualDomNode);
+
+		this.nodeType = null;
+		this.tagName = null;
+		this.parentNode = null;
+		this.children = [];
+		this.isComment = false;
+		this.prevSibling = null;
+		this.nextSibling = null;
+	}
+
+	createClass(VirtualDomNode, [{
+		key: 'appendChild',
+
+
+		/**
+   * Appends the child node to this vdom node
+   *
+   * The base implementation if this only creates the parent/child and sibling
+   * relations.
+   *
+   * @param {VirtualDomNode} childNode The child node to add
    */
-  function VirtualDomNode() {
-    classCallCheck(this, VirtualDomNode);
+		value: function appendChild(childNode) {
+			if (!(childNode instanceof VirtualDomNode)) {
+				throw new TypeError('Can only add other virtual dom nodes as child');
+			}
 
-    this.nodeType = null;
-    this.tagName = null;
-    this.parentNode = null;
-    this.children = [];
-    this.isComment = false;
-    this.prevSibling = null;
-    this.nextSibling = null;
-  }
+			if (childNode.parentNode) {
+				throw new Error('Can\'t append child because it already has a parent.');
+			}
 
-  createClass(VirtualDomNode, [{
-    key: 'appendChild',
+			childNode.parentNode = this;
+			this.children.push(childNode);
 
+			if (this.lastChild) {
+				childNode.prevSibling = this.lastChild;
+				this.lastChild.nextSibling = childNode;
+			}
+		}
 
-    /**
-     * Appends the child node to this vdom node
-     *
-     * The base implementation if this only creates the parent/child and sibling
-     * relations.
-     *
-     * @param {VirtualDomNode} childNode The child node to add
-     */
-    value: function appendChild(childNode) {
-      if (!(childNode instanceof VirtualDomNode)) {
-        throw new TypeError('Can only add other virtual dom nodes as child');
-      }
+		/**
+   * Removes a child node from this vnode
+   *
+   * @param {VirtualDomNode} childNode The child node to remove
+   */
 
-      if (childNode.parentNode) {
-        throw new Error('Can\'t append child because it already has a parent.');
-      }
+	}, {
+		key: 'removeChild',
+		value: function removeChild(childNode) {
+			if (!(childNode instanceof VirtualDomNode)) {
+				throw new TypeError('Can only remove other virtual dom nodes');
+			}
 
-      childNode.parentNode = this;
-      this.children.push(childNode);
+			if (!childNode.parentNode) {
+				throw new Error('Can\'t remove child because it has no parent.');
+			}
 
-      if (this.lastChild) {
-        childNode.prevSibling = this.lastChild;
-        this.lastChild.nextSibling = childNode;
-      }
-    }
+			if (childNode.parentNode !== this) {
+				throw new Error('Can\'t remove child because it has a different parent.');
+			}
 
-    /**
-     * Removes a child node from this vnode
-     *
-     * @param {VirtualDomNode} childNode The child node to remove
-     */
+			if (childNode.prevSibling) {
+				childNode.prevSibling.nextSibling = childNode.nextSibling;
+			}
 
-  }, {
-    key: 'removeChild',
-    value: function removeChild(childNode) {
-      if (!(childNode instanceof VirtualDomNode)) {
-        throw new TypeError('Can only remove other virtual dom nodes');
-      }
+			if (childNode.nextSibling) {
+				childNode.nextSibling.prevSibling = childNode.prevSibling;
+			}
 
-      if (!childNode.parentNode) {
-        throw new Error('Can\'t remove child because it has no parent.');
-      }
-
-      if (childNode.parentNode !== this) {
-        throw new Error('Can\'t remove child because it has a different parent.');
-      }
-
-      if (childNode.prevSibling) {
-        childNode.prevSibling.nextSibling = childNode.nextSibling;
-      }
-
-      if (childNode.nextSibling) {
-        childNode.nextSibling.prevSibling = childNode.prevSibling;
-      }
-
-      childNode.parentNode = null;
-      this.children = this.children.filter(function (node) {
-        return node !== childNode;
-      });
-    }
-  }, {
-    key: 'toString',
-    value: function toString() {
-      return this.constructor.name + '(' + this.tagName + ')';
-    }
-  }]);
-  return VirtualDomNode;
+			childNode.parentNode = null;
+			this.children = this.children.filter(function (node) {
+				return node !== childNode;
+			});
+		}
+	}, {
+		key: 'toString',
+		value: function toString() {
+			return this.constructor.name + '(' + this.tagName + ')';
+		}
+	}]);
+	return VirtualDomNode;
 }();
 
 VirtualDomNode.NODE_TYPE_ELEMENT = 1;
 VirtualDomNode.NODE_TYPE_TEXT = 3;
 VirtualDomNode.NODE_TYPE_COMMENT = 8;
 VirtualDomNode.NODE_TYPE_DOCUMENT = 9;
+
+/**
+ * Comment node in our vdom
+ *
+ * This will only be used as a placeholder node which we mount Vue on.
+ */
 
 var CommentNode = function (_VirtualDomNode) {
 	inherits(CommentNode, _VirtualDomNode);
@@ -4266,6 +4439,10 @@ var CommentNode = function (_VirtualDomNode) {
 	return CommentNode;
 }(VirtualDomNode);
 
+/**
+ * The root node in our vdom
+ */
+
 var DocumentNode = function (_VirtualDomNode) {
 	inherits(DocumentNode, _VirtualDomNode);
 
@@ -4282,12 +4459,83 @@ var DocumentNode = function (_VirtualDomNode) {
 	return DocumentNode;
 }(VirtualDomNode);
 
+var ListSection = {
+	name: 'list-section',
+
+	template: '\n\t\t<titanium-list-section ref="listSection"></titanium-list-section>\n\t',
+
+	props: {
+		items: {
+			type: Array
+		}
+	},
+
+	watch: {
+		items: function items(newValue) {
+			this.$refs.listSection.setAttribute('items', newValue);
+		}
+	},
+
+	mounted: function mounted() {
+		this.$refs.listSection.setAttribute('items', this.items);
+		this.$parent.appendSection(this.$refs.listSection.titaniumView);
+	}
+};
+
+var ListView = {
+	name: 'list-view',
+
+	template: '\n\t\t<titanium-list-view ref="listView" @itemClick="onItemClick">\n\t\t\t<slot></slot>\n\t\t</titanium-list-view>\n\t',
+
+	props: {
+		sections: {
+			type: Map
+		}
+	},
+
+	created: function created() {
+		this.templates = {};
+	},
+	mounted: function mounted() {
+		this.$el.setAttribute('templates', this.templates);
+	},
+
+
+	methods: {
+		addTemplate: function addTemplate(templateName, template) {
+			this.templates[templateName] = template;
+		},
+		appendSection: function appendSection(section) {
+			this.$refs.listView.titaniumView.appendSection(section);
+		},
+		onItemClick: function onItemClick(args) {
+			this.$emit('itemClick', args);
+		}
+	}
+};
+
+var Tab = {
+	name: 'tab',
+
+	template: '\n\t\t<titanium-tab ref="tab">\n\t\t\t<slot></slot>\n\t\t</titanium-tab>\n\t',
+
+	mounted: function mounted() {
+		if (this.$el.children.length > 1) {
+			warn('A Tab view should contain only 1 root element', this);
+		}
+
+		var tabView = this.$refs.tab.titaniumView;
+		tabView.window = this.$el.children[0].titaniumView;
+		this.$parent.addTab(tabView);
+	}
+};
+
 var TabGroup = {
-	name: 'tab-goup',
+	name: 'tab-group',
 
 	props: ['selectedTab'],
 
-	template: '<titanium-tab-group ref="tabGroup" v-model="selectedIndex"><slot></slot></titanium-tab-group>',
+	template: '\n\t\t<titanium-tab-group ref="tabGroup" v-model="selectedIndex">\n\t\t\t<slot></slot>\n\t\t</titanium-tab-group>\n\t',
 
 	data: function data() {
 		return {
@@ -4312,56 +4560,92 @@ var TabGroup = {
 	}
 };
 
-var Tab = {
-	name: 'tab',
-
-	template: '<titanium-tab ref="tab"><slot></slot></titanium-tab>',
-
-	mounted: function mounted() {
-		if (this.$el.children.length > 1) {
-			warn('TabViewItem should contain only 1 root element', this);
-		}
-
-		var tabView = this.$refs.tab.titaniumView;
-		tabView.window = this.$el.children[0].titaniumView;
-		this.$parent.addTab(tabView);
-	}
-};
-
 var platformComponents = {
-	TabGroup: TabGroup,
-	Tab: Tab
+	ListSection: ListSection,
+	ListView: ListView,
+	Tab: Tab,
+	TabGroup: TabGroup
 };
 
-var TitaniumViewNode = function (_VirtualDomNode) {
-	inherits(TitaniumViewNode, _VirtualDomNode);
+/**
+ * General element node in the vdom
+ */
+
+var ElementNode = function (_VirtualDomNode) {
+	inherits(ElementNode, _VirtualDomNode);
+
+	function ElementNode(tagName) {
+		classCallCheck(this, ElementNode);
+
+		var _this = possibleConstructorReturn(this, (ElementNode.__proto__ || Object.getPrototypeOf(ElementNode)).call(this));
+
+		_this.nodeType = VirtualDomNode.NODE_TYPE_ELEMENT;
+		_this.tagName = tagName;
+		_this.attributes = new Map();
+		_this.styles = new Map();
+		return _this;
+	}
+
+	createClass(ElementNode, [{
+		key: 'setAttribute',
+		value: function setAttribute(key, value) {
+			this.attributes.set(key, value);
+		}
+	}, {
+		key: 'setStyle',
+		value: function setStyle(property, value) {
+			this.styles.set(property, value);
+		}
+	}]);
+	return ElementNode;
+}(VirtualDomNode);
+
+/**
+ * A node in the vdom that represents a Titanium view
+ */
+
+var TitaniumViewNode = function (_ElementNode) {
+	inherits(TitaniumViewNode, _ElementNode);
 
 	/**
   * Constructs a new Titanium view node
   */
-	function TitaniumViewNode() {
+	function TitaniumViewNode(tagName) {
 		classCallCheck(this, TitaniumViewNode);
 
-		var _this = possibleConstructorReturn(this, (TitaniumViewNode.__proto__ || Object.getPrototypeOf(TitaniumViewNode)).call(this));
+		var _this = possibleConstructorReturn(this, (TitaniumViewNode.__proto__ || Object.getPrototypeOf(TitaniumViewNode)).call(this, tagName));
 
-		_this._titaniumView = null;
 		_this._meta = null;
+		_this._titaniumViewFactory = getTitaniumViewFactory(tagName);
+		_this._titaniumView = null;
+		_this._createOptions = {};
 		return _this;
 	}
+
+	/**
+  * Gets the underlying Titanium view
+  *
+  * @return {Object} Titanium view instance
+  */
+
 
 	createClass(TitaniumViewNode, [{
 		key: 'setAttribute',
 		value: function setAttribute(key, value) {
+			get(TitaniumViewNode.prototype.__proto__ || Object.getPrototypeOf(TitaniumViewNode.prototype), 'setAttribute', this).call(this, key, value);
+
 			var propertyName = key;
 			var setterName = 'set' + capitalize(propertyName);
 
-			if (this.titaniumView[propertyName]) {
-				this.titaniumView[propertyName] = value;
+			if (this.titaniumView[setterName]) {
+				console.log(this.toString() + '.setAttribute via setter: ' + setterName + '(' + JSON.stringify(value) + ')');
+				this.titaniumView[setterName](value);
 				return;
 			}
 
-			if (this.titaniumView[setterName]) {
-				this.titaniumView[setterName](value);
+			if (this.titaniumView[propertyName]) {
+				console.log(this.toString() + '.setAttribute via property: ' + propertyName + '(' + JSON.stringify(value) + ')');
+				this.titaniumView[propertyName] = value;
 				return;
 			}
 
@@ -4380,6 +4664,8 @@ var TitaniumViewNode = function (_VirtualDomNode) {
 	}, {
 		key: 'setStyle',
 		value: function setStyle(property, value) {
+			get(TitaniumViewNode.prototype.__proto__ || Object.getPrototypeOf(TitaniumViewNode.prototype), 'setStyle', this).call(this, property, value);
+
 			if (!(value = value.trim()).length) {
 				return;
 			}
@@ -4425,6 +4711,10 @@ var TitaniumViewNode = function (_VirtualDomNode) {
 		value: function appendChild(childNode) {
 			get(TitaniumViewNode.prototype.__proto__ || Object.getPrototypeOf(TitaniumViewNode.prototype), 'appendChild', this).call(this, childNode);
 
+			if (childNode.nodeType === VirtualDomNode.NODE_TYPE_TEXT) {
+				this.setText(childNode.text);
+			}
+
 			if (!(childNode instanceof TitaniumViewNode)) {
 				return;
 			}
@@ -4443,6 +4733,10 @@ var TitaniumViewNode = function (_VirtualDomNode) {
 		value: function removeChild(childNode) {
 			get(TitaniumViewNode.prototype.__proto__ || Object.getPrototypeOf(TitaniumViewNode.prototype), 'removeChild', this).call(this, childNode);
 
+			if (childNode.nodeType === VirtualDomNode.NODE_TYPE_TEXT) {
+				this.setText('');
+			}
+
 			var parentView = this.titaniumView;
 			var childView = childNode.titaniumView;
 
@@ -4459,10 +4753,24 @@ var TitaniumViewNode = function (_VirtualDomNode) {
 			this.titaniumView.removeEventListener(event);
 		}
 	}, {
+		key: 'toTemplate',
+		value: function toTemplate() {}
+	}, {
 		key: 'titaniumView',
 		get: function get$$1() {
-			return this._titaniumView;
+			if (this._titaniumView) {
+				return this._titaniumView;
+			}
+			console.log('factory: ' + this.tagName + ' ' + this._titaniumViewFactory.name + '(' + JSON.stringify(this._createOptions) + ')');
+			return this._titaniumView = this._titaniumViewFactory(this._createOptions);
 		}
+
+		/**
+   * Gets the meta data associated with this Titanium view
+   *
+   * @return {Object} Meta data object
+   */
+
 	}, {
 		key: 'meta',
 		get: function get$$1() {
@@ -4474,45 +4782,11 @@ var TitaniumViewNode = function (_VirtualDomNode) {
 		}
 	}]);
 	return TitaniumViewNode;
-}(VirtualDomNode);
+}(ElementNode);
 
-var ElementNode = function (_TitaniumViewNode) {
-	inherits(ElementNode, _TitaniumViewNode);
-
-	function ElementNode(tagName) {
-		classCallCheck(this, ElementNode);
-
-		var _this = possibleConstructorReturn(this, (ElementNode.__proto__ || Object.getPrototypeOf(ElementNode)).call(this));
-
-		_this.nodeType = VirtualDomNode.NODE_TYPE_ELEMENT;
-		_this.tagName = tagName;
-
-		var titaniumViewFactory = getTitaniumViewFactory(tagName);
-		_this._titaniumView = titaniumViewFactory();
-		return _this;
-	}
-
-	createClass(ElementNode, [{
-		key: 'appendChild',
-		value: function appendChild(childNode) {
-			get(ElementNode.prototype.__proto__ || Object.getPrototypeOf(ElementNode.prototype), 'appendChild', this).call(this, childNode);
-
-			if (childNode.nodeType === VirtualDomNode.NODE_TYPE_TEXT) {
-				this.setText(childNode.text);
-			}
-		}
-	}, {
-		key: 'removeChild',
-		value: function removeChild(childNode) {
-			get(ElementNode.prototype.__proto__ || Object.getPrototypeOf(ElementNode.prototype), 'removeChild', this).call(this, childNode);
-
-			if (childNode.nodeType === VirtualDomNode.NODE_TYPE_TEXT) {
-				this.setText('');
-			}
-		}
-	}]);
-	return ElementNode;
-}(TitaniumViewNode);
+/**
+ * A test node in the vdom
+ */
 
 var TextNode = function (_VirtualDomNode) {
 	inherits(TextNode, _VirtualDomNode);
@@ -4537,26 +4811,99 @@ var TextNode = function (_VirtualDomNode) {
 	return TextNode;
 }(VirtualDomNode);
 
+/**
+ * Factory for creating the different vdom nodes
+ */
+
+var NodeFactory = function () {
+	function NodeFactory() {
+		classCallCheck(this, NodeFactory);
+	}
+
+	createClass(NodeFactory, null, [{
+		key: 'createComment',
+
+
+		/**
+   * Creates a new comment node
+   *
+   * @param {String} text Text of the comment
+   * @return {CommentNode}
+   */
+		value: function createComment(text) {
+			return new CommentNode(text);
+		}
+
+		/**
+   * Creates a new elment node
+   *
+   * This can either be a Titanium view if we have it registered or a general
+   * element node.
+   *
+   * @param {String} tagName Name of the tag
+   * @return {ElementNode|TitaniumViewNode}
+   */
+
+	}, {
+		key: 'createElement',
+		value: function createElement(tagName) {
+			if (isTitaniumView(tagName)) {
+				return new TitaniumViewNode(tagName);
+			} else {
+				return new ElementNode(tagName);
+			}
+		}
+
+		/**
+   * Creates a namespaces element node
+   *
+   * @param {String} namespace Element namespace
+   * @param {String} tagName Name of the tag
+   * @return {ElementNode|TitaniumViewNode}
+   */
+
+	}, {
+		key: 'createElementNS',
+		value: function createElementNS(namespace, tagName) {
+			return NodeFactory.createEelement(namespace + ':' + tagName);
+		}
+
+		/**
+   * Creates a new text node
+   *
+   * @param {String} text Text of the node
+   * @return {TextNode}
+   */
+
+	}, {
+		key: 'createTextNode',
+		value: function createTextNode(text) {
+			return new TextNode(text);
+		}
+	}]);
+	return NodeFactory;
+}();
+
 /* eslint-disable no-console */
 
 function createElement$1(tagName) {
 	console.log('{TitaniumVue} -> createElement(' + tagName + ')');
-	return new ElementNode(tagName);
+	return NodeFactory.createElement(tagName);
 }
 
 function createElementNS(namespace, tagName) {
-	console.log('{TitaniumVue} -> createElementNS(' + namespace + '#' + tagName + ')');
-	return new ElementNode(namespace + ':' + tagName);
+	console.log('{TitaniumVue} -> createElementNS(' + namespace + ', ' + tagName + ')');
+	return NodeFactory.createElementNS(namespace, tagName);
 }
 
 function createTextNode(text) {
 	console.log('{TitaniumVue} -> createTextNode(' + text + ')');
-	return new TextNode(text);
+	return NodeFactory.createTextNode(text);
 }
 
 function createComment(text) {
 	console.log('{TitaniumVue} -> createComment(' + text + ')');
-	return new CommentNode(text);
+	return NodeFactory.createComment(text);
 }
 
 function appendChild(node, child) {
@@ -4575,17 +4922,17 @@ function insertBefore(parentNode, newNode, referenceNode) {
 }
 
 function parentNode(node) {
-	console.log('{TitaniumVue} -> parentNode(' + node + ')');
+	console.log('{TitaniumVue} -> parentNode(' + node + ') -> ' + node.parentNode);
 	return node.parentNode;
 }
 
 function nextSibling(node) {
-	console.log('{TitaniumVue} -> pextSibling(' + node + ')');
+	console.log('{TitaniumVue} -> nextSibling(' + node + ') -> ' + node.nextSibling);
 	return node.nextSibling;
 }
 
 function tagName(elementNode) {
-	console.log('{TitaniumVue} -> tagName(' + elementNode + ')');
+	console.log('{TitaniumVue} -> tagName(' + elementNode + ') -> ' + elementNode.tagName);
 	return elementNode.tagName;
 }
 
@@ -5252,6 +5599,12 @@ function createPatchFunction(backend) {
   };
 }
 
+/**
+ * Handles setting attributes on vdom nodes
+ *
+ * @param {Object} oldVnode Old vdom node
+ * @param {Object} vnode Updated vdom node
+ */
 function updateAttrs(oldVnode, vnode) {
 	if (!oldVnode.data.attrs && !vnode.data.attrs) {
 		return;
@@ -5286,6 +5639,11 @@ var attrs = {
 	update: updateAttrs
 };
 
+/**
+ * Target vnode for an event
+ *
+ * @type {Object}
+ */
 var target$1 = void 0;
 
 /**
@@ -5583,6 +5941,7 @@ var isNonPhrasingTag = makeMap('address,article,aside,base,blockquote,body,capti
  * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
  */
 
+// Regular Expressions for parsing tags and attributes
 var singleAttrIdentifier = /([^\s"'<>/=]+)/;
 var singleAttrAssign = /(?:=)/;
 var singleAttrValues = [
@@ -6973,6 +7332,7 @@ var baseDirectives = {
   cloak: noop
 };
 
+// configurable state
 var warn$2 = void 0;
 var transforms$1 = void 0;
 var dataGenFns = void 0;
@@ -7343,6 +7703,8 @@ function transformSpecialNewlines(text) {
   return text.replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
 }
 
+// these keywords should not appear inside expressions, but operators like
+// typeof, instanceof and in are allowed
 var prohibitedKeywordRE = new RegExp('\\b' + ('do,if,for,let,new,try,var,case,else,with,await,break,catch,class,const,' + 'super,throw,while,yield,delete,export,import,return,switch,default,' + 'extends,finally,continue,debugger,function,arguments').split(',').join('\\b|\\b') + '\\b');
 
 // these unary operators should not be used as property/method names
@@ -7552,6 +7914,74 @@ function createCompiler(baseOptions) {
   };
 }
 
+function updateAttrs$1(oldVnode, vnode) {
+	if (!oldVnode.data.attrs && !vnode.data.attrs) {
+		return;
+	}
+	var key = void 0,
+	    cur = void 0,
+	    old = void 0;
+	var elm = vnode.elm;
+	var oldAttrs = oldVnode.data.attrs || {};
+	var attrs = vnode.data.attrs || {};
+	// clone observed objects, as the user probably wants to mutate it
+	if (attrs.__ob__) {
+		attrs = vnode.data.attrs = extend({}, attrs);
+	}
+
+	for (key in attrs) {
+		cur = attrs[key];
+		old = oldAttrs[key];
+		if (old !== cur) {
+			elm.setAttribute(key, cur);
+		}
+	}
+	for (key in oldAttrs) {
+		if (attrs[key] == null) {
+			elm.setAttribute(key);
+		}
+	}
+}
+
+var attrs$1 = {
+	create: updateAttrs$1,
+	update: updateAttrs$1
+};
+
+/**
+ * Extracts the v-platform directive from a node and sets a flag on the node
+ * to not render any template code if the platform does not matches the current
+ * platform
+ *
+ * @param {Object} el ASTElement from the parser
+ * @param {Object} options
+ */
+function preTransformNode(el, options) {
+  var platformName = getAndRemoveAttr(el, 'v-platform');
+  if (platformName) {
+    // We need to get this from the build target if we start to pre-compile templates
+    // instead of compiling them during runtime.
+    var currentPlatformName = Ti.Platform.osname;
+    el.shouldNotRender = platformName !== currentPlatformName;
+  }
+}
+
+/**
+ * Removes all template code related to a node if the shouldNotRender flag is set
+ *
+ * @param {Object} el ASTElement from the code generator
+ * @param {string} code Existing code for the node
+ * @return {string} The untouched code if the node should be rendered, empty string if not
+ */
+function transformCode(el, code) {
+  return el.shouldNotRender ? '' : code;
+}
+
+var platform = {
+  preTransformNode: preTransformNode,
+  transformCode: transformCode
+};
+
 var normalize$1 = cached(camelize);
 
 function transformNode(el, options) {
@@ -7622,13 +8052,7 @@ var style$1 = {
 	genData: genData$1
 };
 
-//import klass from './class'
-var modules$1 = [
-//klass,
-style$1
-//props,
-//append
-];
+var modules$1 = [attrs$1, platform, style$1];
 
 function model(el, dir) {
 	if (el.type === VirtualDomNode.NODE_TYPE_ELEMENT) {
@@ -7662,22 +8086,67 @@ var directives$1 = {
 	model: model
 };
 
+/**
+ * Checks of a tag is reserved and should not be used as a component name
+ *
+ * @type {Boolean}
+ */
 var isReservedTag = makeMap('template', true);
 
-var canBeLeftOpenTag$1 = function canBeLeftOpenTag(el) {
-	return getViewMeta(el).canBeLeftOpenTag;
-};
-
-var isUnaryTag$1 = function isUnaryTag(el) {
-	return getViewMeta(el).isUnaryTag;
-};
-
-function mustUseProp() {
-	// console.log('mustUseProp')
+/**
+ * Checks if a tag is self closing and therefore can intentionally be left open
+ *
+ * @param {String} tag The tag to check
+ * @return {Boolean} True if the tag can be left open, false if not
+ */
+function canBeLeftOpenTag$1(tag) {
+  if (isTitaniumView(tag)) {
+    return getViewMeta(tag).canBeLeftOpenTag;
+  }
+  return false;
 }
 
-function getTagNamespace(el) {
-	return getViewMeta(el).tagNamespace;
+/**
+ * Returns true for attributes that must use props for binding
+ *
+ * @TODO evaluate which tags can be added here
+ *
+ * @param {String} tag Name of the tag the attribute was found on
+ * @param {String} type Type of the tag (as in input tags, should be irrelevant for us)
+ * @param {String} attributeName Attribute name
+ * @return {Boolean} True if the attribute should use props for binding, false if not
+ */
+function mustUseProp(tag, type, attributeName) {
+  console.log('mustUseProps(' + tag + ', ' + type + ', ' + attributeName + ')');
+  return false;
+}
+
+/**
+ * Returns the namespace of a tag
+ *
+ * Currently unused, maybe interesting for platform specific tags?
+ *
+ * @param {String} tag Tag to get the namespace for
+ * @return {String}
+ */
+function getTagNamespace(tag) {
+  if (isTitaniumView(tag)) {
+    return getViewMeta(tag).tagNamespace;
+  }
+  return '';
+}
+
+/**
+ * Checks if a tag is unary, i.e. has no content
+ *
+ * @param {String} tag Tag to check
+ * @return {Boolean}
+ */
+function isUnaryTag$1(tag) {
+  if (isTitaniumView(tag)) {
+    return getViewMeta(tag).isUnaryTag;
+  }
+  return false;
 }
 
 var baseOptions = {
@@ -7697,7 +8166,6 @@ var compileToFunctions = _createCompiler.compileToFunctions;
 
 Vue$2.prototype.$document = new DocumentNode();
 
-//Vue.options.directives = platformDirectives;
 Vue$2.options.components = platformComponents;
 
 Vue$2.prototype.__patch__ = patch;
