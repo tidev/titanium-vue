@@ -1,4 +1,4 @@
-import { getViewMeta } from '../../element-registry';
+import { getViewMeta } from '../../../element-registry';
 
 export default {
 	name: 'item-template',
@@ -26,22 +26,22 @@ export default {
 			let templates = [];
 			for (let node of nodes) {
 				let meta = getViewMeta(node.tagName);
-				let templateDefintion = {
+				let templateDefinition = {
 					type: meta.type
 				};
 				let properties = {};
 				node.attributes.forEach((attributeValue, attributeName) => {
 					if (attributeName === 'bindId') {
-						templateDefintion.bindId = attributeValue;
+						templateDefinition.bindId = attributeValue;
 					} else {
 						properties[attributeName] = attributeValue;
 					}
 				});
-				templateDefintion.properties = properties;
+				templateDefinition.properties = properties;
 				if (node.children.length > 0) {
-					templateDefintion.childTemplates = this.convertNodesToTemplates(node.children);
+					templateDefinition.childTemplates = this.convertNodesToTemplates(node.children);
 				}
-				templates.push(templateDefintion);
+				templates.push(templateDefinition);
 			}
 			return templates;
 		}
