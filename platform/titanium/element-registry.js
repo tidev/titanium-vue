@@ -78,7 +78,6 @@ export function registerElement(tagName, createFactoryResolver, meta = {}) {
 		throw new Error(`Element ${tagName} already registered.`);
 	}
 
-	console.log(meta);
 	let elementData = {
 		factoryResolver: createFactoryResolver,
 		meta: Object.assign({}, defaultViewMeta, meta)
