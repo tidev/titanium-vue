@@ -9,7 +9,8 @@ export default {
 
 	props: {
 		sections: {
-			type: Map
+			type: Array,
+			default: () => []
 		}
 	},
 
@@ -19,6 +20,9 @@ export default {
 
 	mounted() {
 		this.$el.setAttribute('templates', this.templates);
+		this.sections.forEach(section => {
+			this.$refs.listView.titaniumView.appendSection(section);
+		});
 	},
 
 	methods: {
@@ -26,7 +30,7 @@ export default {
 			this.templates[templateName] = template;
 		},
 		appendSection(section) {
-			this.$refs.listView.titaniumView.appendSection(section);
+			this.sections.push(section);
 		},
 		onItemClick(args) {
 			this.$emit('itemClick', args);
