@@ -40,13 +40,22 @@ new Vue({
 
 ```
 
-Features that are currently working are a few base components (Window, Button, Label and Tabs) as well as applying styles, attributes and event handlers to those elements.
+Features that are currently working are most of the base views from the Ti.UI.* namespace as well as applying inline styles, attributes and event handlers to those elements.
+
+## Next challenges
+
+- [ ] Properly implement more complex views that require more setup than just adding them as a child view with custom components like DashboardView, Picker and ScrollableView
+- [ ] Pre-compile single file components (.vue) and make them available to the app. This will allow users to properly organize their app and prevents expensive template compilation during runtime.
+- [ ] Apply styles from CSS. This requires a CSS parser and a mechanism to apply those styles to the matching elements at runtime.
+- [ ] Hot module reloading for single file components. This would probably build upon the precompiled single file components from .vue files and the [vue-hot-reload-api](https://github.com/vuejs/vue-hot-reload-api).
 
 ## Developer Guide
 
 ### Setup
 
 Clone the repo and run `npm run dev` to run an initial build to the dist directory and start watching for changes for easy development.
+
+> ⚠️ Due to a bug in [rollup-plugin-alias](https://github.com/rollup/rollup-plugin-alias/issues/11) it is currently not possible to build titanium-vue on a windows machine.
 
 ### Exposing Titanium UI
 
