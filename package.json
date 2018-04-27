@@ -3,13 +3,29 @@
   "version": "0.1.0",
   "description": "Vue.js integration for Titanium",
   "main": "dist/titanium-vue.js",
+  "module": "dist/vue.runtime.js",
   "scripts": {
-    "dev": "rollup -c -w",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dist": "rollup -c"
+    "dev": "rollup -w -c scripts/config.js --environment TARGET:titanium-full",
+    "build": "node scripts/build.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Axway Appcelerator",
+  "author": "Axway, Inc. <npmjs@appcelerator.com>",
+  "contributors": [
+    "Jan Vennemann <jvennemann@axway.com> (https://github.com/janvennemann)"
+  ],
+  "keywords": [
+    "titanium",
+    "vue"
+  ],
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appcelerator/titanium-vue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appcelerator/titanium-vue/issues"
+  },
+  "homepage": "https://github.com/appcelerator/titanium-vue#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-external-helpers": "^6.22.0",
