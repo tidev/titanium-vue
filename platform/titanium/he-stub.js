@@ -1,4 +1,6 @@
-export function decode(html) {
-	// todo?
-	return html;
-}
+export default {
+	decode: (html) => {
+		// todo?
+		return html;
+	}
+};

@@ -1,0 +1,21 @@
+{
+  "name": "titanium-vue-template-compiler",
+  "version": "0.1.0",
+  "description": "Template compiler for Titnaium Vue",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appcelerator/titanium-vue.git"
+  },
+  "keywords": [
+    "titanium",
+    "vue",
+    "compiler"
+  ],
+  "author": "Axway Appcelerator",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/appcelerator/titanium-vue/issues"
+  },
+  "homepage": "https://github.com/appcelerator/titanium-vue#readme"
+}
