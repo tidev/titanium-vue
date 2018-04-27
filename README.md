@@ -1,6 +1,10 @@
-# Titanium + Vue.js
+<p align="center"><img width="450" src="./assets/titanium-vue.png" /></p>
 
-> Use Vue.js to utilize the cross-platform power of Titanium
+<h1 align="center">Titanium Vue</h1>
+
+Use [Vue.js](https://vuejs.org/) to easily create native mobile apps with Axway Appcelerator Titanium.
+
+> ⚠️ This platform is currently in an early beta stage. Expect things to be broken or APIs to change as this project matures. DO NOT USE IN PRODUCTION!
 
 ## Introduction
 
@@ -11,7 +15,8 @@ First integration of Vue.js and Titanium. It works by replacing the virtual dom 
 Copy [dist/titanium-vue.js](dist/titanium-vue.js) to a classic app's resource directory and paste the following to `app.js`
 
 ```javascript
-var Vue = require('titanium-vue');
+import Vue = 'titanium-vue';
+
 new Vue({
 	template: `
 		<tab-group ref="tabGroup">
@@ -72,3 +77,18 @@ More complex elements may require to be wrapped in a Vue component. To avoid nam
 `registerElement('titanium-tab-group', () => Ti.UI.createTabGroup);`
 
 Take a look at the [platform components](platform/titanium/runtime/components) to see existing implementations of Vue.js components wrapping Titanium views.
+
+## Contributions
+
+Open source contributions are greatly appreciated! If you have a bugfix, improvement or new feature, please create
+[an issue](https://github.com/appcelerator/titanium-vue/issues/new) first and submit a [pull request](https://github.com/appcelerator/titanium-vue/pulls/new) against master.
+
+## Getting Help
+
+If you have questions about the Vue platform on Titanium, feel free to reach out on Stackoverflow or the
+`#titanium-vue` channel on [TiSlack](http://tislack.org). In case you find a bug, create a [new issue](/issues/new)
+or open a [new JIRA ticket](https://jira.appcelerator.org).
+
+## License
+
+Apache 2
