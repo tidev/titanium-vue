@@ -14,8 +14,8 @@ First integration of Vue.js and Titanium. It works by replacing the virtual dom 
 
 Copy [dist/titanium-vue.js](dist/titanium-vue.js) to a classic app's resource directory and paste the following to `app.js`
 
-```javascript
-import Vue = 'titanium-vue';
+```js
+import Vue from 'titanium-vue';
 
 new Vue({
 	template: `
@@ -47,7 +47,7 @@ new Vue({
 
 Features that are currently working are most of the base views from the Ti.UI.* namespace as well as applying inline styles, attributes and event handlers to those elements.
 
-## Next challenges
+## Roadmap
 
 - [ ] Properly implement more complex views that require more setup than just adding them as a child view with custom components like DashboardView, Picker and ScrollableView
 - [ ] Pre-compile single file components (.vue) and make them available to the app. This will allow users to properly organize their app and prevents expensive template compilation during runtime.
