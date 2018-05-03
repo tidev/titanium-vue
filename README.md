@@ -2,7 +2,7 @@
 
 <h1 align="center">Titanium Vue</h1>
 
-<p align="center">Use <a href="https://vuejs.org" target="_blank">Vue.js</a> to easily create native mobile apps with Axway Appcelerator Titanium.</p>
+<p align="center">Use <a href="https://vuejs.org" target="_blank">Vue.js</a> to easily create <strong>native</strong> mobile apps with Axway Appcelerator <a href="https://www.appcelerator.com/mobile-app-development-products/" target="_blank">Titanium</a>.</p>
 
 <img src="./assets/screenshot-example.png" width="900" alt="Example Usage" />
 
