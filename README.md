@@ -2,7 +2,9 @@
 
 <h1 align="center">Titanium Vue</h1>
 
-Use [Vue.js](https://vuejs.org/) to easily create native mobile apps with Axway Appcelerator Titanium.
+<p align="center">Use [Vue.js](https://vuejs.org/) to easily create native mobile apps with Axway Appcelerator Titanium.</p>
+
+<img src="./assets/screenshot-example.png" width="900" alt="Example Usage" />
 
 > ⚠️ This platform is currently in an early beta stage. Expect things to be broken or APIs to change as this project matures. DO NOT USE IN PRODUCTION!
 
@@ -42,7 +44,6 @@ new Vue({
 		this.$refs.tabGroup.open();
 	}
 }).$start();
-
 ```
 
 Features that are currently working are most of the base views from the Ti.UI.* namespace as well as applying inline styles, attributes and event handlers to those elements.
