@@ -20,29 +20,28 @@ Copy [dist/titanium-vue.js](dist/titanium-vue.js) to a classic app's resource di
 import Vue from 'titanium-vue';
 
 new Vue({
-	template: `
-		<tab-group ref="tabGroup">
-			<tab :title="'Tab1'">
-				<window :title="'Tab 1'">
-					<label :style="{ color: 'red' }" @click="onClick">Label 1</label>
-				</window>
-			</tab>
-			<tab :title="'Tab 2'">
-				<window :title="'Tab 2'">
-					<label>Label 2</label>
-				</window>
-			</tab>
-		</tab-group>`,
+  template: `
+    <tab-group ref="tabGroup">
+      <tab :title="'Tab1'">
+        <window :title="'Tab 1'">
+          <label :style="{ color: 'red' }" @click="onClick">Label 1</label>
+        </window>
+      </tab>
+      <tab :title="'Tab 2'">
+        <window :title="'Tab 2'">
+          <label>Label 2</label>
+        </window>
+      </tab>
+    </tab-group>`,
 
-	methods: {
-		onClick() {
-			alert('Nice click!');
-		}
-	},
-
-	mounted: function() {
-		this.$refs.tabGroup.open();
-	}
+  methods: {
+    onClick() {
+      alert('Nice click!');
+    }
+  },
+  mounted: function() {
+    this.$refs.tabGroup.open();
+  }
 }).$start();
 ```
 
