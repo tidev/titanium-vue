@@ -12,7 +12,7 @@
 
 First integration of Vue.js and Titanium. It works by replacing the virtual dom in Vue.js with a custom implementation that manages `Ti.UI.*` components.
 
-## Example usage
+## Example Usage
 
 Copy [dist/titanium-vue.js](dist/titanium-vue.js) to a classic app's resource directory and paste the following to `app.js`
 
@@ -55,6 +55,15 @@ Features that are currently working are most of the base views from the Ti.UI.* 
 - [ ] Hot module reloading for single file components. This would probably build upon the precompiled single file components from .vue files and the [vue-hot-reload-api](https://github.com/vuejs/vue-hot-reload-api).
 
 ## Developer Guide
+
+### Choose your Editor
+
+There are Vue plugins for every modern editor that add syntax highlighting, code snippets and auto completion:
+
+- Visual Studio Code: [vetur](https://github.com/vuejs/vetur)
+- Atom: [language-vue](https://atom.io/packages/language-vue)
+- Sublime: [vue-syntax-highlight](https://github.com/vuejs/vue-syntax-highlight)
+- Vim (oh yeah!): [vim-vue](https://github.com/posva/vim-vue)
 
 ### Setup
 
