@@ -14,36 +14,7 @@ First integration of Vue.js and Titanium. It works by replacing the virtual dom 
 
 ## Example Usage
 
-Copy [dist/titanium-vue.js](dist/titanium-vue.js) to a classic app's resource directory and paste the following to `app.js`
-
-```js
-import Vue from 'titanium-vue';
-
-new Vue({
-  template: `
-    <tab-group ref="tabGroup">
-      <tab :title="'Tab1'">
-        <window :title="'Tab 1'">
-          <label :style="{ color: 'red' }" @click="onClick">Label 1</label>
-        </window>
-      </tab>
-      <tab :title="'Tab 2'">
-        <window :title="'Tab 2'">
-          <label>Label 2</label>
-        </window>
-      </tab>
-    </tab-group>`,
-
-  methods: {
-    onClick() {
-      alert('Nice click!');
-    }
-  },
-  mounted: function() {
-    this.$refs.tabGroup.open();
-  }
-}).$start();
-```
+Checkout [titanium-vue-sample](https://github.com/appcelerator/titanium-vue-sample) for sample usage!
 
 Features that are currently working are most of the base views from the Ti.UI.* namespace as well as applying inline styles, attributes and event handlers to those elements.
 
@@ -69,7 +40,15 @@ There are Vue plugins for every modern editor that add syntax highlighting, code
 
 Clone the repo and run `npm run dev` to run an initial build to the dist directory and start watching for changes for easy development.
 
-> ⚠️ Due to a bug in [rollup-plugin-alias](https://github.com/rollup/rollup-plugin-alias/issues/11) it is currently not possible to build titanium-vue on a windows machine.
+### Getting setup to try titanium-vue-sample
+
+1. Clone this repo and [titanium-webpack-devkit](https://github.com/appcelerator/titanium-webpack-devkit).
+2. Run `npm install` in each `titanium-webpack-devkit` and `titanium-vue`.
+3. Clone [titanium-vue-sample](https://github.com/appcelerator/titanium-vue-sample).
+    - Make sure this directory is at the same level as the previous two
+4. Run `npm install` in the `titanium-vue-sample/app` directory
+5. Run `ti build` in `titanium-vue-sample`
+
 
 ### Exposing Titanium UI
 
