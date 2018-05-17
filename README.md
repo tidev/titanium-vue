@@ -10,7 +10,7 @@ Use [Vue.js](https://vuejs.org/) to easily create native mobile apps with Axway 
 
 First integration of Vue.js and Titanium. It works by replacing the virtual dom in Vue.js with a custom implementation that manages `Ti.UI.*` components.
 
-## Example usage
+## Example app
 
 Copy [dist/titanium-vue.js](dist/titanium-vue.js) to a classic app's resource directory and paste the following to `app.js`
 
@@ -50,7 +50,7 @@ Features that are currently working are most of the base views from the Ti.UI.* 
 ## Roadmap
 
 - [ ] Properly implement more complex views that require more setup than just adding them as a child view with custom components like DashboardView, Picker and ScrollableView
-- [ ] Pre-compile single file components (.vue) and make them available to the app. This will allow users to properly organize their app and prevents expensive template compilation during runtime.
+- [ ] Integrate [vue-router](https://github.com/vuejs/vue-router), the official router for [Vue.js](https://vuejs.org/)
 - [ ] Apply styles from CSS. This requires a CSS parser and a mechanism to apply those styles to the matching elements at runtime.
 - [ ] Hot module reloading for single file components. This would probably build upon the precompiled single file components from .vue files and the [vue-hot-reload-api](https://github.com/vuejs/vue-hot-reload-api).
 
@@ -59,8 +59,6 @@ Features that are currently working are most of the base views from the Ti.UI.* 
 ### Setup
 
 Clone the repo and run `npm run dev` to run an initial build to the dist directory and start watching for changes for easy development.
-
-> ⚠️ Due to a bug in [rollup-plugin-alias](https://github.com/rollup/rollup-plugin-alias/issues/11) it is currently not possible to build titanium-vue on a windows machine.
 
 ### Exposing Titanium UI
 
