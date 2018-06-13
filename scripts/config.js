@@ -7,7 +7,7 @@ const version = process.env.VERSION || require('../package.json').version
 
 const banner =
   '/*!\n' +
-  ' * Titanium-Vue.js v' + version + '\n' +
+  ' * Titanium x Vue v' + version + '\n' +
   ' * (c) 2017-' + new Date().getFullYear() + ' Axway Appcelerator\n' +
   ' * Released under the Apache 2.0 License.\n' +
   ' */'
@@ -23,27 +23,39 @@ const resolve = p => {
 }
 
 const builds = {
-  // Runtime only (ES Modules). Used by bundlers that support ES Modules,
-  // e.g. Rollup & Webpack 2
-  'titanium-runtime': {
+  // Runtime only (CommonJS)
+  'titanium-runtime-cjs': {
     entry: resolve('titanium/entry-runtime.js'),
-    dest: resolve('dist/titanium-vue.runtime.js'),
+    dest: resolve('dist/titanium-vue.runtime.common.js'),
+    format: 'cjs',
+    banner
+  },
+  // Runtime only (ES Module)
+  'titanium-runtime-esm': {
+    entry: resolve('titanium/entry-runtime.js'),
+    dest: resolve('dist/titanium-vue.runtime.esm.js'),
     format: 'es',
     banner
   },
-  // Runtime+compiler build
-  'titanium-full': {
+  // Runtime+compiler build (CommonJS)
+  'titanium-full-cjs': {
     entry: resolve('titanium/entry-runtime-with-compiler.js'),
-    dest: resolve('dist/titanium-vue.js'),
+    dest: resolve('dist/titanium-vue.common.js'),
+    format: 'cjs',
+    banner
+  },
+  // Runtime+compiler build (ES Module)
+  'titanium-full-esm': {
+    entry: resolve('titanium/entry-runtime-with-compiler.js'),
+    dest: resolve('dist/titanium-vue.esm.js'),
     format: 'es',
     banner
   },
-  // Titanium compiler (CommonJS). Used used as a custom template compiler for the vue-loader.
+  // Template compiler only. Used as a custom template compiler for the vue-loader.
   'titanium-compiler': {
     entry: resolve('titanium/entry-compiler.js'),
     dest: resolve('packages/titanium-vue-template-compiler/build.js'),
     format: 'cjs'
-    //external: Object.keys(require('../packages/titanium-vue-template-compiler/package.json').dependencies)
   }
 }
 

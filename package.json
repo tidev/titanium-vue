@@ -2,10 +2,12 @@
   "name": "titanium-vue",
   "version": "0.1.0",
   "description": "Vue.js integration for Titanium",
-  "main": "dist/titanium-vue.js",
-  "module": "dist/vue.runtime.js",
+  "main": "dist/titanium-vue.runtime.common.js",
+  "module": "dist/titanium-vue.runtime.esm.js",
   "scripts": {
-    "dev": "rollup -w -c scripts/config.js --environment TARGET:titanium-full",
+    "dev": "rollup -c scripts/config.js --environment TARGET:titanium-full-cjs",
+    "dev:runtime": "rollup -w -c scripts/config.js --environment TARGET:titanium-runtime-esm",
+    "dev:compiler": "rollup -w -c scripts/config.js --environment TARGET:titanium-compiler",
     "build": "node scripts/build.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
