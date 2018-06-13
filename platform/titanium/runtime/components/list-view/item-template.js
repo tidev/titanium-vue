@@ -1,4 +1,6 @@
-import { getViewMeta } from '../../../element-registry';
+import { TitaniumElementRegistry } from 'titanium-vdom';
+
+const registry = TitaniumElementRegistry.getInstance();
 
 export default {
 	name: 'item-template',
@@ -25,7 +27,7 @@ export default {
 		convertNodesToTemplates(nodes) {
 			let templates = [];
 			for (let node of nodes) {
-				let meta = getViewMeta(node.tagName);
+				let meta = registry.getViewMetadata(node.tagName);
 				let templateDefinition = {
 					type: meta.type
 				};

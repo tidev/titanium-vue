@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var deindent = _interopDefault(require('de-indent'));
+var titaniumVdom = require('titanium-vdom');
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -3389,6 +3390,56 @@ var createCompiler = createCompilerCreator(function baseCompile(template, option
   };
 });
 
+/**
+ * Returns true for attributes that must use props for binding
+ *
+ * @TODO evaluate which tags can be added here
+ *
+ * @param {String} tag Name of the tag the attribute was found on
+ * @param {String} type Type of the tag (as in input tags, should be irrelevant for us)
+ * @param {String} attributeName Attribute name
+ * @return {Boolean} True if the attribute should use props for binding, false if not
+ */
+function mustUseProp(tag, type, attributeName) {
+  return false;
+}
+
+/**
+ * Checks of a tag is reserved and should not be used as a component name
+ *
+ * @type {Boolean}
+ */
+var isReservedTag = makeMap('template', true);
+
+/**
+ * Returns the namespace of a tag
+ * 
+ * Namespaced tags are currently not support so we always return an empty
+ * string.
+ *
+ * @param {String} tag Tag to get the namespace for
+ * @return {String}
+ */
+function getTagNamespace(tag) {
+  return '';
+}
+
+var elementRegistry = titaniumVdom.TitaniumElementRegistry.getInstance();
+elementRegistry.defaultViewMeta = {
+    detached: false,
+    model: {
+        prop: 'text',
+        event: 'change'
+    }
+};
+elementRegistry.namingStrategy = { normalizeName: function normalizeName(name) {
+        return name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    } };
+
+function getViewMeta(tagName) {
+    return elementRegistry.getViewMetadata(tagName);
+}
+
 function updateAttrs(oldVnode, vnode) {
 	if (!oldVnode.data.attrs && !vnode.data.attrs) {
 		return;
@@ -3529,336 +3580,8 @@ var style = {
 
 var modules = [attrs, platform, style];
 
-/**
- * Mapping of element tag names and their respective Titanium view and meta data
- *
- * @type {Map}
- */
-var elements = new Map();
-
-/**
- * The default meta data for a Titanium view node
- *
- * @type {Object}
- */
-var defaultViewMeta = {
-	skipAddToDom: false,
-	isUnaryTag: false,
-	tagNamespace: '',
-	canBeLeftOpen: false,
-	model: {
-		prop: 'text',
-		event: 'textChange'
-	}
-};
-
-/**
- * Gets the meta data for a view associated with the given tag name
- *
- * @param {string} tagName Tag name of the Titianium view
- * @return {Object} Meta data object
- */
-function getViewMeta(tagName) {
-	var elementData = elements.get(tagName);
-
-	if (elementData === undefined) {
-		throw new Error('No view with meta data registered for tag ' + tagName);
-	}
-
-	return elementData.meta;
-}
-
-/**
- * Checks if we have a Titanium view registered for the given tag name
- *
- * @param {string} tagName Tag name to check
- * @return {Boolean} True if there is a Titanium view for the tag, false if not
- */
-function isTitaniumView(tagName) {
-	return elements.has(tagName);
-}
-
-/**
- * Registers a Titanium UI view as a new element
- *
- * @param {string} tagName Tag name to register the elements under
- * @param {Function} createFactoryResolver Create factory function of the Titanium view
- * @param {Object} meta Optional meta data to be associated with the view
- */
-function registerElement(tagName, createFactoryResolver) {
-	var meta = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-	if (elements.has(tagName)) {
-		throw new Error('Element ' + tagName + ' already registered.');
-	}
-
-	var elementData = {
-		factoryResolver: createFactoryResolver,
-		meta: Object.assign({}, defaultViewMeta, meta)
-	};
-	elements.set(tagName, elementData);
-}
-
-// Register all Titanium views as vdom elements here
-// Titanium views that need to be wrapped in a Vue component for easier usability
-// should be prefixed with titanium, so the component can expose them under their
-// original name
-
-/* global Ti */
-
-registerElement('activity-indicator', function () {
-	return Ti.UI.createActivityIndicator;
-}, {
-	type: 'Ti.UI.ActivityIndicator'
-});
-
-registerElement('button', function () {
-	return Ti.UI.createButton;
-}, {
-	type: 'Ti.UI.Button'
-});
-
-registerElement('button-bar', function () {
-	return Ti.UI.createButtonBar;
-}, {
-	type: 'Ti.UI.ButtonBar'
-});
-
-registerElement('cover-flow-view', function () {
-	return Ti.UI.createCoverFlowView;
-}, {
-	type: 'Ti.UI.CoverFlowView'
-});
-
-registerElement('dashboard-item', function () {
-	return Ti.UI.createDashboardItem;
-}, {
-	type: 'Ti.UI.DashboardItem'
-});
-
-registerElement('dashboard-view', function () {
-	return Ti.UI.createDashboardView;
-}, {
-	type: 'Ti.UI.DashboardView'
-});
-
-registerElement('image-view', function () {
-	return Ti.UI.createImageView;
-}, {
-	type: 'Ti.UI.ImageView'
-});
-
-registerElement('label', function () {
-	return Ti.UI.createLabel;
-}, {
-	type: 'Ti.UI.Label'
-});
-
-registerElement('picker', function () {
-	return Ti.UI.createPicker;
-}, {
-	type: 'Ti.UI.Picker'
-});
-
-registerElement('progress-bar', function () {
-	return Ti.UI.createProgressBar;
-}, {
-	type: 'Ti.UI.ProgressBar'
-});
-
-registerElement('refresh-control', function () {
-	return Ti.UI.createRefreshControl;
-}, {
-	type: 'Ti.UI.RefreshControl'
-});
-
-registerElement('scrollable-view', function () {
-	return Ti.UI.createScrollableView;
-}, {
-	type: 'Ti.UI.ScrollableView'
-});
-
-registerElement('search-bar', function () {
-	return Ti.UI.createSearchBar;
-}, {
-	type: 'Ti.UI.SearchBar'
-});
-
-registerElement('slider', function () {
-	return Ti.UI.createSlider;
-}, {
-	type: 'Ti.UI.Slider'
-});
-
-registerElement('switch', function () {
-	return Ti.UI.createSwitch;
-}, {
-	type: 'Ti.UI.Switch'
-});
-
-registerElement('text-area', function () {
-	return Ti.UI.createTextArea;
-}, {
-	type: 'Ti.UI.TextArea'
-});
-
-registerElement('text-field', function () {
-	return Ti.UI.createTextField;
-}, {
-	type: 'Ti.UI.TextField'
-});
-
-registerElement('titanium-list-view', function () {
-	return Ti.UI.createListView;
-}, {
-	type: 'Ti.UI.ListView'
-});
-
-registerElement('titanium-list-section', function () {
-	return Ti.UI.createListSection;
-}, {
-	type: 'Ti.UI.ListSection',
-	skipAddToDom: true
-});
-
-registerElement('titanium-tab-group', function () {
-	return Ti.UI.createTabGroup;
-}, {
-	type: 'Ti.UI.TabGroup'
-});
-
-registerElement('titanium-tab', function () {
-	return Ti.UI.createTab;
-}, {
-	type: 'Ti.UI.Tab'
-});
-
-registerElement('toolbar', function () {
-	return Ti.UI.createToolbar;
-}, {
-	type: 'Ti.UI.Toolbar'
-});
-
-registerElement('view', function () {
-	return Ti.UI.createView;
-}, {
-	type: 'Ti.UI.View'
-});
-
-registerElement('web-view', function () {
-	return Ti.UI.createWebView;
-}, {
-	type: 'Ti.UI.WebView'
-});
-
-registerElement('window', function () {
-	return Ti.UI.createWindow;
-}, {
-	type: 'Ti.UI.Window',
-	skipAddToDom: true
-});
-
-/**
- * Base class for all nodes in our virtual dom
- */
-
-var VirtualDomNode = function () {
-
-	/**
-  * Constructs a new vdom node
-  */
-	function VirtualDomNode() {
-		classCallCheck(this, VirtualDomNode);
-
-		this.nodeType = null;
-		this.tagName = null;
-		this.parentNode = null;
-		this.children = [];
-		this.isComment = false;
-		this.prevSibling = null;
-		this.nextSibling = null;
-	}
-
-	createClass(VirtualDomNode, [{
-		key: 'appendChild',
-
-
-		/**
-   * Appends the child node to this vdom node
-   *
-   * The base implementation if this only creates the parent/child and sibling
-   * relations.
-   *
-   * @param {VirtualDomNode} childNode The child node to add
-   */
-		value: function appendChild(childNode) {
-			if (!(childNode instanceof VirtualDomNode)) {
-				throw new TypeError('Can only add other virtual dom nodes as child');
-			}
-
-			if (childNode.parentNode) {
-				throw new Error('Can\'t append child because it already has a parent.');
-			}
-
-			childNode.parentNode = this;
-			this.children.push(childNode);
-
-			if (this.lastChild) {
-				childNode.prevSibling = this.lastChild;
-				this.lastChild.nextSibling = childNode;
-			}
-		}
-
-		/**
-   * Removes a child node from this vnode
-   *
-   * @param {VirtualDomNode} childNode The child node to remove
-   */
-
-	}, {
-		key: 'removeChild',
-		value: function removeChild(childNode) {
-			if (!(childNode instanceof VirtualDomNode)) {
-				throw new TypeError('Can only remove other virtual dom nodes');
-			}
-
-			if (!childNode.parentNode) {
-				throw new Error('Can\'t remove child because it has no parent.');
-			}
-
-			if (childNode.parentNode !== this) {
-				throw new Error('Can\'t remove child because it has a different parent.');
-			}
-
-			if (childNode.prevSibling) {
-				childNode.prevSibling.nextSibling = childNode.nextSibling;
-			}
-
-			if (childNode.nextSibling) {
-				childNode.nextSibling.prevSibling = childNode.prevSibling;
-			}
-
-			childNode.parentNode = null;
-			this.children = this.children.filter(function (node) {
-				return node !== childNode;
-			});
-		}
-	}, {
-		key: 'toString',
-		value: function toString() {
-			return this.constructor.name + '(' + this.tagName + ')';
-		}
-	}]);
-	return VirtualDomNode;
-}();
-
-VirtualDomNode.NODE_TYPE_ELEMENT = 1;
-VirtualDomNode.NODE_TYPE_TEXT = 3;
-VirtualDomNode.NODE_TYPE_COMMENT = 8;
-VirtualDomNode.NODE_TYPE_DOCUMENT = 9;
-
 function model(el, dir) {
-	if (el.type === VirtualDomNode.NODE_TYPE_ELEMENT) {
+	if (el.type === titaniumVdom.NodeType.Element) {
 		genDefaultModel(el, dir.value, dir.modifiers);
 	} else {
 		genComponentModel(el, dir.value, dir.modifiers);
@@ -3890,78 +3613,39 @@ var directives = {
 };
 
 /**
- * Checks of a tag is reserved and should not be used as a component name
- *
- * @type {Boolean}
- */
-var isReservedTag = makeMap('template', true);
-
-/**
- * Checks if a tag is self closing and therefore can intentionally be left open
- *
- * @param {String} tag The tag to check
- * @return {Boolean} True if the tag can be left open, false if not
- */
-function canBeLeftOpenTag$1(tag) {
-  if (isTitaniumView(tag)) {
-    return getViewMeta(tag).canBeLeftOpenTag;
-  }
-  return false;
-}
-
-/**
- * Returns true for attributes that must use props for binding
- *
- * @TODO evaluate which tags can be added here
- *
- * @param {String} tag Name of the tag the attribute was found on
- * @param {String} type Type of the tag (as in input tags, should be irrelevant for us)
- * @param {String} attributeName Attribute name
- * @return {Boolean} True if the attribute should use props for binding, false if not
- */
-function mustUseProp(tag, type, attributeName) {
-  console.log('mustUseProps(' + tag + ', ' + type + ', ' + attributeName + ')');
-  return false;
-}
-
-/**
- * Returns the namespace of a tag
- *
- * Currently unused, maybe interesting for platform specific tags?
- *
- * @param {String} tag Tag to get the namespace for
- * @return {String}
- */
-function getTagNamespace(tag) {
-  if (isTitaniumView(tag)) {
-    return getViewMeta(tag).tagNamespace;
-  }
-  return '';
-}
-
-/**
- * Checks if a tag is unary, i.e. has no content
+ * Checks if a tag is unary, i.e. has no content.
+ * 
+ * Always returns false since we don't have any unary tags.
  *
  * @param {String} tag Tag to check
  * @return {Boolean}
  */
 function isUnaryTag$1(tag) {
-  if (isTitaniumView(tag)) {
-    return getViewMeta(tag).isUnaryTag;
-  }
+  return false;
+}
+
+/**
+ * Checks if a tag is self closing and therefore can intentionally be left open.
+ * 
+ * Returns false since we force all tags to be closed.
+ *
+ * @param {String} tag The tag to check
+ * @return {Boolean} True if the tag can be left open, false if not
+ */
+function canBeLeftOpenTag$1(tag) {
   return false;
 }
 
 var baseOptions = {
-	modules: modules,
-	directives: directives,
-	isUnaryTag: isUnaryTag$1,
-	mustUseProp: mustUseProp,
-	canBeLeftOpenTag: canBeLeftOpenTag$1,
-	isReservedTag: isReservedTag,
-	getTagNamespace: getTagNamespace,
-	preserveWhitespace: false,
-	staticKeys: genStaticKeys(modules)
+    modules: modules,
+    directives: directives,
+    isUnaryTag: isUnaryTag$1,
+    mustUseProp: mustUseProp,
+    canBeLeftOpenTag: canBeLeftOpenTag$1,
+    isReservedTag: isReservedTag,
+    getTagNamespace: getTagNamespace,
+    preserveWhitespace: false,
+    staticKeys: genStaticKeys(modules)
 };
 
 var _createCompiler = createCompiler(baseOptions),

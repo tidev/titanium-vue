@@ -1,25 +1,38 @@
 /* eslint-disable no-console */
 
-import NodeFactory from '../vdom/NodeFactory';
+import {
+	CommentNode,
+	InvisibleElement,
+	TextNode,
+	TitaniumElement,
+	TitaniumElementRegistry
+} from 'titanium-vdom';
+
+const registry = TitaniumElementRegistry.getInstance();
 
 export function createElement(tagName) {
 	console.log(`{TitaniumVue} -> createElement(${tagName})`);
-	return NodeFactory.createElement(tagName);
+	if (registry.hasElement(tagName)) {
+		const elementEntry = registry.getElement(tagName);
+		return new TitaniumElement(tagName, elementEntry.resolveFactory(), elementEntry.meta);
+	} else {
+		return new InvisibleElement(tagName);
+	}
 }
 
 export function createElementNS(namespace, tagName) {
-	console.log(`{TitaniumVue} -> createElementNS(${namespace}, ${tagName})`);
-	return NodeFactory.createElementNS(namespace, tagName);
+	//console.log(`{TitaniumVue} -> createElementNS(${namespace}, ${tagName})`);
+	throw new Error('createElementNS is not implemented.');
 }
 
 export function createTextNode(text) {
-	console.log(`{TitaniumVue} -> createTextNode(${text})`);
-	return NodeFactory.createTextNode(text);
+	//console.log(`{TitaniumVue} -> createTextNode(${text})`);
+	return new TextNode(text);
 }
 
 export function createComment(text) {
-	console.log(`{TitaniumVue} -> createComment(${text})`);
-	return NodeFactory.createComment(text);
+	//console.log(`{TitaniumVue} -> createComment(${text})`);
+	return new CommentNode(text);
 }
 
 export function appendChild(node, child) {
@@ -28,7 +41,7 @@ export function appendChild(node, child) {
 }
 
 export function removeChild(node, child) {
-	console.log(`{TitaniumVue} -> removeChild(${node}, ${child})`);
+	//console.log(`{TitaniumVue} -> removeChild(${node}, ${child})`);
 	node.removeChild(child);
 }
 
@@ -38,26 +51,26 @@ export function insertBefore(parentNode, newNode, referenceNode) {
 }
 
 export function parentNode(node) {
-	console.log(`{TitaniumVue} -> parentNode(${node}) -> ${node.parentNode}`);
+	//console.log(`{TitaniumVue} -> parentNode(${node}) -> ${node.parentNode}`);
 	return node.parentNode;
 }
 
 export function nextSibling(node) {
-	console.log(`{TitaniumVue} -> nextSibling(${node}) -> ${node.nextSibling}`);
+	//console.log(`{TitaniumVue} -> nextSibling(${node}) -> ${node.nextSibling}`);
 	return node.nextSibling;
 }
 
 export function tagName(elementNode) {
-	console.log(`{TitaniumVue} -> tagName(${elementNode}) -> ${elementNode.tagName}`);
+	//console.log(`{TitaniumVue} -> tagName(${elementNode}) -> ${elementNode.tagName}`);
 	return elementNode.tagName;
 }
 
 export function setTextContent(node, text) {
-	console.log(`{TitaniumVue} -> setTextContent(${node}, ${text})`);
-	node.setText(text);
+	//console.log(`{TitaniumVue} -> setTextContent(${node}, ${text})`);
+	node.nodeValue = text;
 }
 
 export function setAttribute(node, key, val) {
-	console.log(`{TitaniumVue} -> setAttribute(${node}, ${key}, ${val})`);
+	//console.log(`{TitaniumVue} -> setAttribute(${node}, ${key}, ${val})`);
 	node.setAttribute(key, val);
 }

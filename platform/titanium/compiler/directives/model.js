@@ -1,10 +1,11 @@
 import { addHandler, addAttr } from 'compiler/helpers';
 import { genComponentModel, genAssignmentCode } from 'compiler/directives/model';
-import VirtualDomNode from '../../vdom/VirtualDomNode';
-import { getViewMeta } from '../../element-registry';
+import { NodeType } from 'titanium-vdom';
+
+import { getViewMeta } from '../../util/registry';
 
 export default function model (el, dir) {
-	if (el.type === VirtualDomNode.NODE_TYPE_ELEMENT) {
+	if (el.type === NodeType.Element) {
 		genDefaultModel(el, dir.value, dir.modifiers);
 	} else {
 		genComponentModel(el, dir.value, dir.modifiers);

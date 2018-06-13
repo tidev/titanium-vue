@@ -29,7 +29,7 @@ function add(event, handler, once, capture) {
 			}
 		};
 	}
-	target.addEventListener(event, handler);
+	target.on(event, handler);
 }
 
 /**
@@ -41,7 +41,7 @@ function add(event, handler, once, capture) {
  * @param {Object} _target
  */
 function remove(event, handler, capture, _target) {
-	(_target || target).removeEventListener(event);
+	(_target || target).off(event);
 }
 
 /**

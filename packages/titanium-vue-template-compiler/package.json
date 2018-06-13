@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/appcelerator/titanium-vue/issues"
   },
-  "homepage": "https://github.com/appcelerator/titanium-vue#readme"
+  "homepage": "https://github.com/appcelerator/titanium-vue#readme",
+  "dependencies": {
+    "titanium-vdom": "*"
+  }
 }
