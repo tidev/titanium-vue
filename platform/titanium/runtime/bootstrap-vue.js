@@ -4,6 +4,7 @@ import { EmulatedRootElement, ElementNode } from 'titanium-vdom';
 
 import platformComponents from './components/index';
 import { patch } from './patch';
+import TitaniumRouter from '../router/titanium-router';
 import { initializeTitaniumElements } from '../util/registry';
 
 initializeTitaniumElements();
@@ -13,6 +14,8 @@ Vue.prototype.$document = new EmulatedRootElement();
 Vue.options.components = platformComponents;
 
 Vue.prototype.__patch__ = patch;
+
+Vue.use(TitaniumRouter);
 
 Vue.prototype.$start = function () {
 	this.__is_root__ = true;
