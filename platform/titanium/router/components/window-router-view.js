@@ -4,13 +4,13 @@ import ReuseRoute from './reuse-route';
 
 export default {
     name: 'WindowRouterView',
-    functional: true,
+    abstract: true,
     components: {
         ReuseRoute
     },
-    render(h,  { props, children, parent, data }) {
+    render(h) {
         return h(ReuseRoute, [
-            h(Vue.options.components['router-view'], data, children)
+            h(Vue.options.components['router-view'], this.$slots.default)
         ]);
     }
 }
