@@ -21,7 +21,7 @@ export class VueComponentAdapter {
             // ???
             console.log('trying to detach CommentNode, do nothing');
         } else if (element.nodeType === NodeType.Element) {
-            element.remove();
+            //element.remove();
         }
     }
 
