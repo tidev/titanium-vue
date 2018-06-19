@@ -1,5 +1,6 @@
 import { navigationManager } from './navigation';
 import WindowRouterView from './components/window-router-view';
+import ReuseRoute from './components/reuse-route';
 
 function initializeWindowRouting(router) {
 	if (router.__windowRoutingInitialized) {
@@ -11,6 +12,10 @@ function initializeWindowRouting(router) {
 	router.isInitialRoute = true;
 
 	patchRouter(router);
+
+	navigationManager.nativeBackNavigationSignal.subscribe(() => {
+		router.back();
+	});
 }
 
 function patchRouter(router) {
@@ -37,10 +42,7 @@ export default {
 	install(Vue) {
 		Vue.mixin({
 			beforeCreate() {
-				console.log(`[TR] - beforeCreate ${this.$options.name}`);
-
 				if (this.$options.router && this.$options.router.options.windowRouting) {
-					console.log('patching router');
 					initializeWindowRouting(this.$options.router);
 				}
 			},
@@ -51,8 +53,11 @@ export default {
 						return;
 					}
 
-					console.log('beforeRouteEnter');
-
+					const topmostMatchedInstance = to.matched[0].instances.default;
+					if (topmostMatchedInstance !== vm) {
+						return;
+					}
+					
 					if (navigationManager.isNativeBackNavigation) {
 						navigationManager.resetBackNavigationFlags();
 					} else if (navigationManager.isLocationBackNavigation) {
