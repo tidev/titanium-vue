@@ -1,4 +1,3 @@
-/* @flow */
 import { getFirstComponentChild } from 'core/vdom/helpers/index'
 import { navigationManager } from '../navigation';
 
@@ -10,7 +9,13 @@ export default {
         this.cache = new Map();
         this.$router.afterEach((to, from) => {
             if (navigationManager.isNativeBackNavigation || navigationManager.isLocationBackNavigation) {
-                this.cache.delete(from.fullPath);
+                const key = from.fullPath;
+                const cached = this.cache.get(key);
+                const current = this._vnode;
+                if (cached && (!current || cached.tag !== current.tag)) {
+                    cached.componentInstance.$destroy()
+                }
+                this.cache.delete(key);
             }
         });
     },
