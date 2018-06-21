@@ -1,4 +1,4 @@
-import { NodeType, TitaniumElement } from 'titanium-vdom';
+import { TitaniumElement } from 'titanium-vdom';
 
 export class VueComponentAdapter {
     getComponentName(component) {
@@ -15,14 +15,7 @@ export class VueComponentAdapter {
     }
 
     detachComponent(component) {
-        console.log('detachComponent');
-        const element = component.$el;
-        if (element.nodeType === NodeType.Comment) {
-            // ???
-            console.log('trying to detach CommentNode, do nothing');
-        } else if (element.nodeType === NodeType.Element) {
-            //element.remove();
-        }
+        // not needed for Vue
     }
 
     getTopmostTitaniumElement(component) {

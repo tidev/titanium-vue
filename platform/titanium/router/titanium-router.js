@@ -1,6 +1,8 @@
-import { navigationManager } from './navigation';
+import { VueComponentAdapter, VueRouterStateAdapter } from './adapters/index';
+import { createNavigationManager } from './navigation';
 import WindowRouterView from './components/window-router-view';
-import ReuseRoute from './components/reuse-route';
+
+let navigationManager;
 
 function initializeWindowRouting(router) {
 	if (router.__windowRoutingInitialized) {
@@ -11,11 +13,15 @@ function initializeWindowRouting(router) {
 	router.__windowRoutingInitialized = true;
 	router.isInitialRoute = true;
 
-	patchRouter(router);
-
+	navigationManager = createNavigationManager({
+		componentAdapter: new VueComponentAdapter(),
+		createRouterStateAdapter: () => new VueRouterStateAdapter(router.history)
+	});
 	navigationManager.nativeBackNavigationSignal.subscribe(() => {
 		router.back();
 	});
+
+	patchRouter(router);
 }
 
 function patchRouter(router) {
