@@ -1,17 +1,15 @@
 export default {
 	name: 'list-view',
 
-	template: `
-		<titanium-list-view ref="listView" @itemClick="onItemClick">
-			<slot></slot>
-		</titanium-list-view>
-	`,
-
 	props: {
 		sections: {
 			type: Array,
 			default: () => []
 		}
+	},
+
+	render(h) {
+		return h('titanium-list-view', this.$slots.default);
 	},
 
 	created() {
@@ -20,9 +18,13 @@ export default {
 
 	mounted() {
 		this.$el.setAttribute('templates', this.templates);
-		this.sections.forEach(section => {
-			this.$refs.listView.titaniumView.appendSection(section);
-		});
+		this.$el.setAttribute('sections', this.sections);
+		const owningView = this.$el.parentElement.titaniumView;
+		if (!owningView) {
+			throw new Error(`Parent ${this.$el.parentElement} of list-view component is not a Titanium element`);
+		}
+		owningView.add(this.$el.titaniumView);
+		this.$el.titaniumView.update
 	},
 
 	methods: {
@@ -31,9 +33,9 @@ export default {
 		},
 		appendSection(section) {
 			this.sections.push(section);
-		},
-		onItemClick(args) {
-			this.$emit('itemClick', args);
+			if (this._isMounted) {
+				this.$el.titaniumView.appendSection(section);
+			}
 		}
 	}
 };

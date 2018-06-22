@@ -1,24 +1,24 @@
 export default {
 	name: 'list-section',
 
-	template: `
-		<titanium-list-section ref="listSection"></titanium-list-section>
-	`,
-
 	props: {
 		items: {
 			type: Array
 		}
 	},
 
+	render(h) {
+		return h('titanium-list-section');
+	},
+
 	watch: {
 		items(newValue) {
-			this.$refs.listSection.setAttribute('items', newValue);
+			this.$el.setAttribute('items', newValue);
 		}
 	},
 
 	mounted() {
-		this.$refs.listSection.setAttribute('items', this.items);
-		this.$parent.appendSection(this.$refs.listSection.titaniumView);
-	},
+		this.$el.setAttribute('items', this.items);
+		this.$parent.appendSection(this.$el.titaniumView);
+	}
 };
