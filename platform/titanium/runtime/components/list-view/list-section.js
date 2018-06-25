@@ -1,5 +1,5 @@
 export default {
-	name: 'list-section',
+	name: 'ListSection',
 
 	props: {
 		items: {

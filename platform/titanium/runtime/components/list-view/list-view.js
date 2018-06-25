@@ -1,5 +1,5 @@
 export default {
-	name: 'list-view',
+	name: 'ListView',
 
 	props: {
 		sections: {

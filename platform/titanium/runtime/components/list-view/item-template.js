@@ -3,7 +3,7 @@ import { TitaniumElementRegistry } from 'titanium-vdom';
 const registry = TitaniumElementRegistry.getInstance();
 
 export default {
-	name: 'item-template',
+	name: 'ItemTemplate',
 	props: {
 		name: {
 			type: String,
