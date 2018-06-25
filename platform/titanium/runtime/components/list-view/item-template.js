@@ -24,7 +24,7 @@ function convertNodesToTemplates(nodes) {
 	for (let node of nodes) {
 		let meta = registry.getViewMetadata(node.tag);
 		let templateDefinition = {
-			type: meta.type
+			type: meta.typeName
 		};
 		let properties = {};
 		for (let attributeName in node.data.attrs) {
