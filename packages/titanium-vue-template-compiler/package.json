@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/appcelerator/titanium-vue#readme",
   "dependencies": {
+    "de-indent": "^1.0.2",
     "titanium-vdom": "*"
   }
 }
