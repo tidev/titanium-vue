@@ -15,6 +15,10 @@ export function initializeTitaniumElements() {
     renameWrappedElements(elementRegistry);
 }
 
+export function hasElement(tagName) {
+    return elementRegistry.hasElement(tagName);
+}
+
 export function getViewMeta(tagName) {
     return elementRegistry.getViewMetadata(tagName);
 }
