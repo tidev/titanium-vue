@@ -1,11 +1,9 @@
-export default {
-	name: 'list-view',
+import { TitaniumElementRegistry } from 'titanium-vdom';
 
-	template: `
-		<titanium-list-view ref="listView" @itemClick="onItemClick">
-			<slot></slot>
-		</titanium-list-view>
-	`,
+const registry = TitaniumElementRegistry.getInstance();
+
+export default {
+	name: 'ListView',
 
 	props: {
 		sections: {
@@ -14,26 +12,70 @@ export default {
 		}
 	},
 
+	render(h) {
+		return h('titanium-list-view', {
+			on: this.$listeners
+		}, this.$slots.default);
+	},
+
 	created() {
 		this.templates = {};
 	},
 
 	mounted() {
 		this.$el.setAttribute('templates', this.templates);
-		this.sections.forEach(section => {
-			this.$refs.listView.titaniumView.appendSection(section);
-		});
+		this.$el.setAttribute('sections', this.sections);
+		const listView = this.$el.titaniumView;
+		const owningView = this.$el.parentElement.titaniumView;
+		if (!owningView) {
+			throw new Error(`Parent ${this.$el.parentElement} of list-view component is not a Titanium element`);
+		}
+		owningView.add(listView);
 	},
 
 	methods: {
-		addTemplate(templateName, template) {
-			this.templates[templateName] = template;
+		registerTemplate(itemTemplate) {
+			const templates = [];
+			convertNodesToTemplates(itemTemplate.$el.children, templates);
+			this.templates[itemTemplate.name] = {
+				childTemplates: templates
+			};
+			itemTemplate.$destroy();
 		},
+
 		appendSection(section) {
 			this.sections.push(section);
-		},
-		onItemClick(args) {
-			this.$emit('itemClick', args);
+			if (this._isMounted) {
+				this.$el.titaniumView.appendSection(section);
+			}
 		}
 	}
 };
+
+function convertNodesToTemplates(nodes, templates) {
+	if (!nodes) {
+		console.log('No more child nodes to convert, stopping');
+		return;
+	}
+	for (let node of nodes) {
+		console.log(`converting ${node} to template`);
+		let meta = registry.getViewMetadata(node.tagName);
+		let templateDefinition = {
+			type: meta.typeName,
+			childTemplates: []
+		};
+		let properties = {};
+		node.attributes.forEach((attributeValue, attributeName) => {
+			if (attributeName === 'bindId') {
+				templateDefinition.bindId = attributeValue;
+			} else {
+				properties[attributeName] = attributeValue;
+			}
+		});
+		templateDefinition.properties = properties;
+		if (node.children && node.children.length > 0) {
+			convertNodesToTemplates(node.children, templateDefinition.childTemplates);
+		}
+		templates.push(templateDefinition);
+	}
+}
