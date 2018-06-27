@@ -13,7 +13,9 @@ export default {
 	},
 
 	render(h) {
-		return h('titanium-list-view', this.$slots.default);
+		return h('titanium-list-view', {
+			on: this.$listeners
+		}, this.$slots.default);
 	},
 
 	created() {
