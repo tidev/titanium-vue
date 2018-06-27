@@ -30,4 +30,10 @@ Vue.prototype.$mount = function (el, hydrating) {
 	return mountComponent(this, el, hydrating);
 };
 
+Object.defineProperty(Vue.prototype, '$titaniumView', {
+	get() {
+		return this.$el.titaniumView;
+	}
+});
+
 export default Vue;
