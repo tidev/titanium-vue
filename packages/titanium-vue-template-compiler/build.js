@@ -3436,6 +3436,10 @@ elementRegistry.namingStrategy = { normalizeName: function normalizeName(name) {
         return name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
     } };
 
+function hasElement(tagName) {
+    return elementRegistry.hasElement(tagName);
+}
+
 function getViewMeta(tagName) {
     return elementRegistry.getViewMetadata(tagName);
 }
@@ -3581,10 +3585,13 @@ var style = {
 var modules = [attrs, platform, style];
 
 function model(el, dir) {
-	if (el.type === titaniumVdom.NodeType.Element) {
-		genDefaultModel(el, dir.value, dir.modifiers);
-	} else {
+	if (el.component) {
 		genComponentModel(el, dir.value, dir.modifiers);
+	} else if (!hasElement(el.tag)) {
+		console.log('genComponentModel ' + el.tag);
+		genComponentModel(el, dir.value, dir.modifiers);
+	} else {
+		genDefaultModel(el, dir.value, dir.modifiers);
 	}
 }
 
@@ -3598,13 +3605,16 @@ function genDefaultModel(el, value, modifiers) {
 	    event = _getViewMeta$model.event;
 
 
-	var valueExpression = '$event.target.attr.value' + (trim ? '.trim()' : '');
+	var valueExpression = '$event.' + prop;
+	if (trim) {
+		valueExpression = '$event.' + props + '.trim()';
+	}
 	if (number) {
 		valueExpression = '_n(' + valueExpression + ')';
 	}
 
 	var code = genAssignmentCode(value, valueExpression);
-	addAttr(el, prop, '(' + value + ')');
+	addProp(el, prop, '(' + value + ')');
 	addHandler(el, event, code, null, true);
 }
 
