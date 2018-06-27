@@ -55,7 +55,8 @@ const builds = {
   'titanium-compiler': {
     entry: resolve('titanium/entry-compiler.js'),
     dest: resolve('packages/titanium-vue-template-compiler/build.js'),
-    format: 'cjs'
+    format: 'cjs',
+    external: Object.keys(require('../packages/titanium-vue-template-compiler/package.json').dependencies)
   }
 }
 
@@ -65,7 +66,8 @@ function genConfig (name) {
     input: opts.entry,
     external: [
       'titanium-navigator',
-      'titanium-vdom'
+      'titanium-vdom',
+      ...(opts.external || [])
     ],
     plugins: [
       replace({
