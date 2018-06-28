@@ -1,33 +1,46 @@
 export default {
 	name: 'tab-group',
-
-	props: ['selectedTab'],
-
-	template: `
-		<titanium-tab-group ref="tabGroup" v-model="selectedIndex">
-			<slot></slot>
-		</titanium-tab-group>
-	`,
-
-	data() {
-		return {
-			selectedIndex: 0
-		};
+	model: {
+		prop: 'selectedTab',
+		event: 'focus'
 	},
-
+	props: {
+		selectedTab: Number
+	},
 	watch: {
-		'selectedTab'(index) {
-			this.selectedIndex = index;
+		selectedTab(index) {
+			const selectedTab = this.$titaniumView.tabs[index];
+			this.$titaniumView.activeTab = selectedTab;
 		}
 	},
-
+	provide: function() {
+		return {
+			getTabGroup: this.getTabGroup
+		}
+	},
+	render(h) {
+		const self = this;
+		return h('titanium-tab-group', {
+			on: {
+				focus: function(event) {
+					self.$emit('focus', event.index);
+				}
+			}
+		}, this.$slots.default);
+	},
+	mounted() {
+		const selectedTab = this.$titaniumView.tabs[this.selectedTab];
+		this.$titaniumView.activeTab = selectedTab;
+	},
 	methods: {
-		addTab(tabView) {
-			this.$refs.tabGroup.titaniumView.addTab(tabView);
+		getTabGroup() {
+			return this.$titaniumView;
 		},
-
+		addTab(tabView) {
+			this.$titaniumView.addTab(tabView);
+		},
 		open() {
-			this.$refs.tabGroup.titaniumView.open();
+			this.$titaniumView.open();
 		}
 	}
 };

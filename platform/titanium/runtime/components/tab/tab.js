@@ -1,21 +1,17 @@
-import {warn} from 'core/util/debug';
-
 export default {
 	name: 'tab',
-
-	template: `
-		<titanium-tab ref="tab">
-			<slot></slot>
-		</titanium-tab>
-	`,
-
+	inject: ['getTabGroup'],
+	render(h) {
+		return h('titanium-tab', this.$slots.default);
+	},
 	mounted() {
-		if (this.$el.children.length > 1) {
-			warn('A Tab view should contain only 1 root element', this);
+		const window = this.$el.children.length === 1 ? this.$el.firstElementChild.titaniumView : null;
+		if (!window) {
+			throw new Error('A Tab view must contain a single window as its only child');
 		}
 
-		let tabView = this.$refs.tab.titaniumView;
-		tabView.window = this.$el.children[0].titaniumView;
-		this.$parent.addTab(tabView);
+		let tabView = this.$titaniumView;
+		tabView.window = window;
+		this.getTabGroup().addTab(tabView);
 	}
 };
