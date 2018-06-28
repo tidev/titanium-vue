@@ -4,8 +4,68 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var deindent = _interopDefault(require('de-indent'));
 var titaniumVdom = require('titanium-vdom');
+var deindent = _interopDefault(require('de-indent'));
+
+var elementRegistry = titaniumVdom.TitaniumElementRegistry.getInstance();
+elementRegistry.defaultViewMetadata = {
+    detached: false,
+    model: {
+        prop: 'value',
+        event: 'change'
+    }
+};
+elementRegistry.namingStrategy = { normalizeName: function normalizeName(name) {
+        return name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    } };
+
+function initializeTitaniumElements() {
+    titaniumVdom.registerTitaniumElements(elementRegistry);
+    renameWrappedElements(elementRegistry);
+}
+
+function hasElement(tagName) {
+    return elementRegistry.hasElement(tagName);
+}
+
+function getViewMeta(tagName) {
+    return elementRegistry.getViewMetadata(tagName);
+}
+
+function renameWrappedElements(elementRegistry) {
+    var elementsToRename = ['list-view', 'list-section', 'navigation-window', 'tab-group', 'tab'];
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = elementsToRename[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var tagName = _step.value;
+
+            if (!elementRegistry.hasElement(tagName)) {
+                continue;
+            }
+
+            var elementEntry = elementRegistry.getElement(tagName);
+            elementRegistry.unregisterElement(tagName);
+            elementRegistry.registerElement('titanium-' + tagName, elementEntry.resolveFactory, elementEntry.meta);
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+}
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -3424,26 +3484,6 @@ function getTagNamespace(tag) {
   return '';
 }
 
-var elementRegistry = titaniumVdom.TitaniumElementRegistry.getInstance();
-elementRegistry.defaultViewMeta = {
-    detached: false,
-    model: {
-        prop: 'text',
-        event: 'change'
-    }
-};
-elementRegistry.namingStrategy = { normalizeName: function normalizeName(name) {
-        return name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-    } };
-
-function hasElement(tagName) {
-    return elementRegistry.hasElement(tagName);
-}
-
-function getViewMeta(tagName) {
-    return elementRegistry.getViewMetadata(tagName);
-}
-
 function updateAttrs(oldVnode, vnode) {
 	if (!oldVnode.data.attrs && !vnode.data.attrs) {
 		return;
@@ -3588,7 +3628,6 @@ function model(el, dir) {
 	if (el.component) {
 		genComponentModel(el, dir.value, dir.modifiers);
 	} else if (!hasElement(el.tag)) {
-		console.log('genComponentModel ' + el.tag);
 		genComponentModel(el, dir.value, dir.modifiers);
 	} else {
 		genDefaultModel(el, dir.value, dir.modifiers);
@@ -3614,6 +3653,7 @@ function genDefaultModel(el, value, modifiers) {
 	}
 
 	var code = genAssignmentCode(value, valueExpression);
+	addAttr(el, prop, value);
 	addProp(el, prop, '(' + value + ')');
 	addHandler(el, event, code, null, true);
 }
@@ -3661,6 +3701,8 @@ var baseOptions = {
 var _createCompiler = createCompiler(baseOptions),
     compile = _createCompiler.compile,
     compileToFunctions = _createCompiler.compileToFunctions;
+
+initializeTitaniumElements();
 
 exports.parseComponent = parseComponent;
 exports.compile = compile;
