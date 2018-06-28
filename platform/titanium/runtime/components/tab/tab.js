@@ -1,10 +1,9 @@
 export default {
 	name: 'tab',
-
+	inject: ['getTabGroup'],
 	render(h) {
 		return h('titanium-tab', this.$slots.default);
 	},
-
 	mounted() {
 		const window = this.$el.children.length === 1 ? this.$el.firstElementChild.titaniumView : null;
 		if (!window) {
@@ -13,6 +12,6 @@ export default {
 
 		let tabView = this.$titaniumView;
 		tabView.window = window;
-		this.$parent.addTab(tabView);
+		this.getTabGroup().addTab(tabView);
 	}
 };

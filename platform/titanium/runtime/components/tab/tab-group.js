@@ -13,6 +13,11 @@ export default {
 			this.$titaniumView.activeTab = selectedTab;
 		}
 	},
+	provide: function() {
+		return {
+			getTabGroup: this.getTabGroup
+		}
+	},
 	render(h) {
 		const self = this;
 		return h('titanium-tab-group', {
@@ -28,6 +33,9 @@ export default {
 		this.$titaniumView.activeTab = selectedTab;
 	},
 	methods: {
+		getTabGroup() {
+			return this.$titaniumView;
+		},
 		addTab(tabView) {
 			this.$titaniumView.addTab(tabView);
 		},
