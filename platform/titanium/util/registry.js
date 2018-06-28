@@ -1,10 +1,10 @@
 import { registerTitaniumElements, TitaniumElementRegistry } from 'titanium-vdom';
 
 const elementRegistry = TitaniumElementRegistry.getInstance();
-elementRegistry.defaultViewMeta = {
+elementRegistry.defaultViewMetadata = {
     detached: false,
     model: {
-        prop: 'text',
+        prop: 'value',
         event: 'change'
     }
 };
