@@ -28,6 +28,7 @@ function renameWrappedElements(elementRegistry) {
         'list-view',
         'list-section',
         'navigation-window',
+        'scrollable-view',
         'tab-group',
         'tab'
     ];
