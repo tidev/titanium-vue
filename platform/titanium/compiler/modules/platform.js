@@ -1,5 +1,7 @@
 import { getAndRemoveAttr } from 'compiler/helpers';
 
+const currentPlatformName = process.env.TARGET_PLATFORM;
+
 /**
  * Extracts the v-platform directive from a node and sets a flag on the node
  * to not render any template code if the platform does not matches the current
@@ -11,9 +13,6 @@ import { getAndRemoveAttr } from 'compiler/helpers';
 function preTransformNode(el, options) {
 	let platformName = getAndRemoveAttr(el, 'v-platform');
 	if (platformName) {
-		// We need to get this from the build target if we start to pre-compile templates
-		// instead of compiling them during runtime.
-		let currentPlatformName = Ti.Platform.osname;
 		el.shouldNotRender = platformName !== currentPlatformName;
 	}
 }
