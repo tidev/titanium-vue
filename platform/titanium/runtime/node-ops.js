@@ -36,7 +36,7 @@ export function createComment(text) {
 }
 
 export function appendChild(node, child) {
-	console.log(`{TitaniumVue} -> appendChild(${node}, ${child})`);
+	//console.log(`{TitaniumVue} -> appendChild(${node}, ${child})`);
 	node.appendChild(child);
 }
 
@@ -46,7 +46,7 @@ export function removeChild(node, child) {
 }
 
 export function insertBefore(parentNode, newNode, referenceNode) {
-	console.log(`{TitaniumVue} -> insertBefore(${parentNode}, ${newNode}, ${referenceNode})`);
+	//console.log(`{TitaniumVue} -> insertBefore(${parentNode}, ${newNode}, ${referenceNode})`);
 	parentNode.insertBefore(newNode, referenceNode);
 }
 
@@ -70,7 +70,6 @@ export function setTextContent(node, text) {
 	node.nodeValue = text;
 }
 
-export function setAttribute(node, key, val) {
-	//console.log(`{TitaniumVue} -> setAttribute(${node}, ${key}, ${val})`);
-	node.setAttribute(key, val);
+export function setStyleScope (node, scopeId) {
+  node.setAttribute(scopeId, '');
 }
