@@ -5,7 +5,10 @@ export default {
 		event: 'focus'
 	},
 	props: {
-		selectedTab: Number
+		selectedTab: {
+			type: Number,
+			default: 0
+		}
 	},
 	watch: {
 		selectedTab(index) {
