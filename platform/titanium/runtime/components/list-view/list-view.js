@@ -38,6 +38,7 @@ export default {
 			const templates = [];
 			convertNodesToTemplates(itemTemplate.$el.children, templates);
 			this.templates[itemTemplate.name] = {
+				properties: itemTemplate.properties,
 				childTemplates: templates
 			};
 			itemTemplate.$destroy();

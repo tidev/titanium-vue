@@ -4,6 +4,10 @@ export default {
 		name: {
 			type: String,
 			default: 'default'
+		},
+		properties: {
+			type: Object,
+			default: {}
 		}
 	},
 
