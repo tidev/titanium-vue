@@ -30,14 +30,17 @@ function renameWrappedElements(elementRegistry) {
         'navigation-window',
         'scrollable-view',
         'tab-group',
-        'tab'
+        'tab',
+        'table-view',
+        'table-view-row',
+        'table-view-section'
     ];
 
     for (const tagName of elementsToRename) {
         if (!elementRegistry.hasElement(tagName)) {
             continue;
         }
-        
+
         const elementEntry = elementRegistry.getElement(tagName);
         elementRegistry.unregisterElement(tagName);
         elementRegistry.registerElement(`titanium-${tagName}`, elementEntry.resolveFactory, elementEntry.meta);
