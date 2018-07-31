@@ -20,7 +20,7 @@ export default {
 		if (this.$slots.headerView) {
 			children.push(h('detached-view', { ref: 'headerView' }, this.$slots.headerView));
 		}
-		
+
 		if (this.items.length) {
 			for (let index = 0; index < this.items.length; index++) {
 				const item = this.items[index];
@@ -51,7 +51,7 @@ export default {
 		if (this.$refs.headerView) {
 			const headerViewElement = this.$refs.headerView.firstElementChild;
 			headerViewElement.remove();
-			this.$titaniumView.headerView = headerViewElement.titaniumView;	
+			this.$titaniumView.headerView = headerViewElement.titaniumView;
 		}
 
 		if (this.$refs.footerView) {
@@ -69,7 +69,7 @@ export default {
 				return;
 			}
 
-			this.$titaniumView.insertItemsAt(itemVm.index, [itemVm.item]);
+			this.$titaniumView.insertItemsAt(itemVm.index, [ itemVm.item ]);
 		},
 		deleteItem(itemVm) {
 			if (!this._useReactiveUpdates) {

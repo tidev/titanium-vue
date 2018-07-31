@@ -16,16 +16,16 @@ export default {
 			this.$titaniumView.activeTab = selectedTab;
 		}
 	},
-	provide: function() {
+	provide: function () {
 		return {
 			getTabGroup: this.getTabGroup
-		}
+		};
 	},
 	render(h) {
 		const self = this;
 		return h('titanium-tab-group', {
 			on: {
-				focus: function(event) {
+				focus: function (event) {
 					self.$emit('focus', event.index);
 				}
 			}
