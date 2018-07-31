@@ -8,20 +8,20 @@ import { extend, isDef, isUndef } from 'shared/util';
  */
 function updateAttrs(oldVnode, vnode) {
 	const opts = vnode.componentOptions;
-  if (isDef(opts) && opts.Ctor.options.inheritAttrs === false) {
-    return;
-  }
-  if (isUndef(oldVnode.data.attrs) && isUndef(vnode.data.attrs)) {
-    return;
-  }
+	if (isDef(opts) && opts.Ctor.options.inheritAttrs === false) {
+		return;
+	}
+	if (isUndef(oldVnode.data.attrs) && isUndef(vnode.data.attrs)) {
+		return;
+	}
 	let key, cur, old;
 	const elm = vnode.elm;
 	const oldAttrs = oldVnode.data.attrs || {};
 	let attrs = vnode.data.attrs || {};
 	// clone observed objects, as the user probably wants to mutate it
 	if (isDef(attrs.__ob__)) {
-    attrs = vnode.data.attrs = extend({}, attrs);
-  }
+		attrs = vnode.data.attrs = extend({}, attrs);
+	}
 
 	for (key in attrs) {
 		cur = attrs[key];
@@ -34,7 +34,7 @@ function updateAttrs(oldVnode, vnode) {
 
 function setAttr(el, key, value) {
 	if (key.indexOf(':') !== -1) {
-		const [platformName, attributeName] = key.split(':');
+		const [ platformName, attributeName ] = key.split(':');
 		el.setAttribute(attributeName, value, platformName);
 	} else {
 		el.setAttribute(key, value);

@@ -19,7 +19,7 @@ function genDefaultModel (el, value, modifiers) {
 
 	let valueExpression = `$event.${prop}`;
 	if (trim) {
-		valueExpression = `$event.${props}.trim()`;
+		valueExpression = `$event.${prop}.trim()`;
 	}
 	if (number) {
 		valueExpression = `_n(${valueExpression})`;

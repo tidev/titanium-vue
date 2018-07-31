@@ -1,6 +1,6 @@
 export default {
 	name: 'tab',
-	inject: ['getTabGroup'],
+	inject: [ 'getTabGroup' ],
 	render(h) {
 		return h('titanium-tab', this.$slots.default);
 	},

@@ -1,6 +1,6 @@
 import Vue from './runtime/bootstrap-vue';
-import {warn} from 'core/util/debug';
-import {compileToFunctions} from './compiler/index';
+import { warn } from 'core/util/debug';
+import { compileToFunctions } from './compiler/index';
 
 const mount = Vue.prototype.$mount;
 Vue.prototype.$mount = function (el, hydrating) {
@@ -14,7 +14,7 @@ Vue.prototype.$mount = function (el, hydrating) {
 		}
 
 		if (template) {
-			const {render, staticRenderFns} = compileToFunctions(template, {
+			const { render, staticRenderFns } = compileToFunctions(template, {
 				delimiters: options.delimiters
 			}, this);
 			options.render = render;

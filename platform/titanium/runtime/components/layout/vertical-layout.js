@@ -1,11 +1,11 @@
 export default {
-    name: 'VerticallLayout',
+	name: 'VerticallLayout',
 
-    render(h) {
-        return h('view', {
-            attrs: {
-                layout: 'vertical'
-            }
-        }, this.$slots.default);
-    }
-}
+	render(h) {
+		return h('view', {
+			attrs: {
+				layout: 'vertical'
+			}
+		}, this.$slots.default);
+	}
+};
