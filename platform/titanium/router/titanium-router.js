@@ -1,3 +1,5 @@
+import { warn } from 'core/util/index';
+
 import { VueComponentAdapter, VueRouterStateAdapter } from './adapters/index';
 import { createNavigationManager } from './navigation';
 import WindowRouterView from './components/window-router-view';
@@ -25,6 +27,21 @@ function initializeWindowRouting(router) {
 }
 
 function patchRouter(router) {
+	const originalPush = router.push;
+	router.push = (location, onComplete, onAbort) => {
+		function patchHistoryIfRouteHasNoMatch(to, from) {
+			if (to.matched.length === 0) {
+				if (process.env.NODE_ENV !== 'production') {
+					warn(`No route found for path "${to.fullPath}"`);
+				}
+				router.history.stack.pop();
+				router.history.index -= 1;
+				router.history.current = router.history.stack[router.history.index];
+			}
+		}
+		const patchedOnComplete = onComplete ? wrap(null, onComplete, patchHistoryIfRouteHasNoMatch) : patchHistoryIfRouteHasNoMatch;
+		originalPush.call(router, location, patchedOnComplete, onAbort);
+	};
 	router.back = wrap(router, router.back, () => navigationManager.locationBackNavigation = true);
 	router.forward = () => {
 		throw new Error('Using $router.forward is not supported in the Titanium window router.');
