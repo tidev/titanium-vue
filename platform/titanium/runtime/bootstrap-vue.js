@@ -4,6 +4,7 @@ import { EmulatedRootElement, ElementNode } from 'titanium-vdom';
 
 import platformComponents from './components/index';
 import { patch } from './patch';
+import { TitaniumViewAccessor, TemplateGlobalProvider } from '../plugins/index';
 import TitaniumRouter from '../router/titanium-router';
 import { initializeTitaniumElements } from '../util/registry';
 
@@ -16,6 +17,8 @@ Vue.options.components = platformComponents;
 Vue.prototype.__patch__ = patch;
 
 Vue.use(TitaniumRouter);
+Vue.use(TitaniumViewAccessor);
+Vue.use(TemplateGlobalProvider);
 
 Vue.prototype.$start = function () {
 	this.__is_root__ = true;
@@ -29,11 +32,5 @@ Vue.prototype.$start = function () {
 Vue.prototype.$mount = function (el, hydrating) {
 	return mountComponent(this, el, hydrating);
 };
-
-Object.defineProperty(Vue.prototype, '$titaniumView', {
-	get() {
-		return this.$el.titaniumView;
-	}
-});
 
 export default Vue;
