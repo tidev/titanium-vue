@@ -5,10 +5,11 @@
   "main": "dist/titanium-vue.runtime.common.js",
   "module": "dist/titanium-vue.runtime.esm.js",
   "scripts": {
+    "build": "node scripts/build.js",
     "dev": "rollup -c scripts/config.js --environment TARGET:titanium-full-cjs",
     "dev:runtime": "rollup -w -c scripts/config.js --environment TARGET:titanium-runtime-esm",
     "dev:compiler": "rollup -w -c scripts/config.js --environment TARGET:titanium-compiler",
-    "build": "node scripts/build.js",
+    "lint": "eslint platform scripts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Axway, Inc. <npmjs@appcelerator.com>",
@@ -37,6 +38,8 @@
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-flow-vue": "^1.0.0",
+    "eslint": "^5.2.0",
+    "eslint-config-axway": "^2.0.14",
     "rollup": "^0.58.2",
     "rollup-plugin-alias": "^1.4.0",
     "rollup-plugin-babel": "^3.0.4",

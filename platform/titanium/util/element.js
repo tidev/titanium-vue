@@ -9,7 +9,7 @@ export const isReservedTag = makeMap('template', true);
 
 /**
  * Returns the namespace of a tag
- * 
+ *
  * Namespaced tags are currently not support so we always return an empty
  * string.
  *
@@ -17,5 +17,5 @@ export const isReservedTag = makeMap('template', true);
  * @return {String}
  */
 export function getTagNamespace(tag) {
-    return '';
+	return '';
 }

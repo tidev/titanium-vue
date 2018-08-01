@@ -1,11 +1,11 @@
 export default {
-    name: 'HorizontalLayout',
+	name: 'HorizontalLayout',
 
-    render(h) {
-        return h('view', {
-            attrs: {
-                layout: 'horizontal'
-            }
-        }, this.$slots.default);
-    }
-}
+	render(h) {
+		return h('view', {
+			attrs: {
+				layout: 'horizontal'
+			}
+		}, this.$slots.default);
+	}
+};

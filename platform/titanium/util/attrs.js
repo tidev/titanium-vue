@@ -9,5 +9,5 @@
  * @return {Boolean} True if the attribute should use props for binding, false if not
  */
 export function mustUseProp(tag, type, attributeName) {
-    return false;
+	return false;
 }

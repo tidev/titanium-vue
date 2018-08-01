@@ -13,6 +13,7 @@ let target;
  * @param {Object} event Event object
  * @param {Function} handler Event handler function
  * @param {boolean} once True if the handler should only be colled once
+ * @param {boolean} capture
  */
 function add(event, handler, once, capture) {
 	if (capture) {
