@@ -1,3 +1,5 @@
+import { warn } from 'core/util/index';
+
 export default {
 	name: 'ListSection',
 	props: {
@@ -18,7 +20,15 @@ export default {
 		const children = [];
 
 		if (this.$slots.headerView) {
-			children.push(h('detached-view', { ref: 'headerView' }, this.$slots.headerView));
+			children.push(h('header', { ref: 'headerView', attrs: { detached: true } }, this.$slots.headerView));
+		}
+
+		if (this.$slots.default && this.items.length > 0) {
+			if (process.env.NODE_ENV !== 'production') {
+				warn(`Using the :items prop and list-item elements simultaneously in a
+					list-section is not supported. All list-item elements will be ignored. Either
+					use one or the other.`);
+			}
 		}
 
 		if (this.items.length) {
@@ -31,10 +41,17 @@ export default {
 					}
 				}));
 			}
+		} else if (this.$slots.default) {
+			this.$slots.default.forEach(listItemVnode => {
+				console.log(Object.keys(listItemVnode));
+				const on = listItemVnode.data.on || (listItemVnode.data.on = {})
+				on['item-updated'] = this.onItemUpdated
+				children.push(listItemVnode);
+			});
 		}
 
 		if (this.$slots.footerView) {
-			children.push(h('detached-view', { ref: 'footerView' }, this.$slots.footerView));
+			children.push(h('footer', { ref: 'footerView', attrs: { detached: true } }, this.$slots.footerView));
 		}
 
 		return h('titanium-list-section', children);
@@ -45,7 +62,7 @@ export default {
 	mounted() {
 		// For whatever reason, we need to append the section first before setting
 		// header and foot views
-		this.$titaniumView.items = this.items;
+		this.$titaniumView.items = this.$children.map(listItem => listItem.item);
 		this.$parent.appendSection(this.$titaniumView);
 
 		if (this.$refs.headerView) {
