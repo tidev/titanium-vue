@@ -43,7 +43,6 @@ export default {
 			}
 		} else if (this.$slots.default) {
 			this.$slots.default.forEach(listItemVnode => {
-				console.log(Object.keys(listItemVnode));
 				const on = listItemVnode.data.on || (listItemVnode.data.on = {})
 				on['item-updated'] = this.onItemUpdated
 				children.push(listItemVnode);
