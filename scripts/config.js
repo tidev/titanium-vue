@@ -4,10 +4,11 @@ const alias = require('rollup-plugin-alias');
 const replace = require('rollup-plugin-replace');
 const flow = require('rollup-plugin-flow-no-whitespace');
 const version = process.env.VERSION || require('../package.json').version;
+const vueVersion = require('vue/package.json').version;
 
 const banner =
 	'/*!\n' +
-	' * Titanium x Vue v' + version + '\n' +
+	' * Titanium x Vue v' + version + ' (based on Vue.js v' + vueVersion + ')\n' +
 	' * (c) 2017-' + new Date().getFullYear() + ' Axway Appcelerator\n' +
 	' * Released under the Apache 2.0 License.\n' +
 	' */';
@@ -72,7 +73,8 @@ function genConfig (name) {
 		plugins: [
 			replace({
 				__WEEX__: false,
-				__VERSION__: version,
+				__VERSION__: vueVersion,
+				__TI_VUE_VERSION__: version,
 				'process.env.NODE_ENV': '\'development\'',
 				'let _isServer': 'let _isServer = false'
 			}),
