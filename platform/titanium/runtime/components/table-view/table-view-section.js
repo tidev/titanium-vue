@@ -4,23 +4,18 @@ export default {
 		const children = [];
 
 		if (this.$slots.headerView) {
-			children.push(h('detached-view', { ref: 'headerView' }, this.$slots.headerView));
+			children.push(h('header', { ref: 'headerView', attrs: { detached: true } }, this.$slots.headerView));
 		}
 
-		children.concat(this.$slots.default);
+		children.push(...this.$slots.default);
 
 		if (this.$slots.footerView) {
-			children.push(h('detached-view', { ref: 'footerView' }, this.$slots.footerView));
+			children.push(h('footer', { ref: 'footerView', attrs: { detached: true } }, this.$slots.footerView));
 		}
 
-		return h('titanium-table-view-section', children);
+		return h('titanium-table-view-section', { ref: 'section' }, children);
 	},
 	mounted() {
-		// For whatever reason, we need to append the section first before setting
-		// header and footer views
-		this.$titaniumView.items = this.items;
-		this.$parent.appendSection(this.$titaniumView);
-
 		if (this.$refs.headerView) {
 			const headerViewElement = this.$refs.headerView.firstElementChild;
 			headerViewElement.remove();
@@ -33,7 +28,9 @@ export default {
 			this.$titaniumView.footerView = footerViewElement.titaniumView;
 		}
 	},
-	methods: {
-
+	computed: {
+		dataSource() {
+			return this.$refs.section.titaniumView;
+		}
 	}
 };
