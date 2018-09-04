@@ -16,4 +16,4 @@ export default {
 		}
 		owningView.add(tableView);
 	}
-}
+};

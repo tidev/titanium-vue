@@ -50,7 +50,7 @@ function parseStaticStyle (staticStyle, options) {
 		const styleList = staticStyle.trim().split(';').map(style => {
 			const result = style.trim().split(':');
 			if (result.length !== 2) {
-				return;
+				return false;
 			}
 			const key = normalize(result[0].trim());
 			const value = result[1].trim();

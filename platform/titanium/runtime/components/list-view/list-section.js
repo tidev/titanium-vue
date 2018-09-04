@@ -43,8 +43,8 @@ export default {
 			}
 		} else if (this.$slots.default) {
 			this.$slots.default.forEach(listItemVnode => {
-				const on = listItemVnode.data.on || (listItemVnode.data.on = {})
-				on['item-updated'] = this.onItemUpdated
+				const on = listItemVnode.data.on || (listItemVnode.data.on = {});
+				on['item-updated'] = this.onItemUpdated;
 				children.push(listItemVnode);
 			});
 		}

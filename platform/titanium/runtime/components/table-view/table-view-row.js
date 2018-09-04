@@ -16,4 +16,4 @@ export default {
 			return this.$refs.row.titaniumView;
 		}
 	}
-}
+};
