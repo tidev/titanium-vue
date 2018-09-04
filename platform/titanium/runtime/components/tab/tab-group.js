@@ -1,5 +1,5 @@
 export default {
-	name: 'tab-group',
+	name: 'TabGroup',
 	model: {
 		prop: 'selectedTab',
 		event: 'focus'
@@ -38,12 +38,6 @@ export default {
 	methods: {
 		getTabGroup() {
 			return this.$titaniumView;
-		},
-		addTab(tabView) {
-			this.$titaniumView.addTab(tabView);
-		},
-		open() {
-			this.$titaniumView.open();
 		}
 	}
 };
