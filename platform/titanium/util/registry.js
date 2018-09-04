@@ -30,7 +30,10 @@ function renameWrappedElements(elementRegistry) {
 		'navigation-window',
 		'scrollable-view',
 		'tab-group',
-		'tab'
+		'tab',
+		'table-view',
+		'table-view-row',
+		'table-view-section'
 	];
 
 	for (const tagName of elementsToRename) {
