@@ -7,7 +7,7 @@ export default {
 		},
 		properties: {
 			type: Object,
-			default: {}
+			default: () => {}
 		}
 	},
 
