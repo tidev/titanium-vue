@@ -17,9 +17,9 @@ function genDefaultModel (el, value, modifiers) {
 	const { trim, number } = modifiers || {};
 	const { prop, event } = getViewMeta(el.tag).model;
 
-	let valueExpression = `$event.${prop}`;
+	let valueExpression = `$event.source.${prop}`;
 	if (trim) {
-		valueExpression = `$event.${prop}.trim()`;
+		valueExpression = `$event.source.${prop}.trim()`;
 	}
 	if (number) {
 		valueExpression = `_n(${valueExpression})`;
