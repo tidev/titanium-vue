@@ -28,12 +28,14 @@ function renameWrappedElements(elementRegistry) {
 		'list-view',
 		'list-section',
 		'navigation-window',
+		'refresh-control',
 		'scrollable-view',
 		'tab-group',
 		'tab',
 		'table-view',
 		'table-view-row',
-		'table-view-section'
+		'table-view-section',
+		'toolbar'
 	];
 
 	for (const tagName of elementsToRename) {
