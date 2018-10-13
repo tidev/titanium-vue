@@ -1,8 +1,10 @@
 const path = require('path');
-const babel = require('rollup-plugin-babel');
 const alias = require('rollup-plugin-alias');
-const replace = require('rollup-plugin-replace');
+const babel = require('rollup-plugin-babel');
+const cjs = require('rollup-plugin-commonjs');
 const flow = require('rollup-plugin-flow-no-whitespace');
+const node = require('rollup-plugin-node-resolve');
+const replace = require('rollup-plugin-replace');
 const version = process.env.VERSION || require('../package.json').version;
 const vueVersion = require('vue/package.json').version;
 
@@ -65,11 +67,7 @@ function genConfig (name) {
 	const opts = builds[name];
 	const config = {
 		input: opts.entry,
-		external: [
-			'titanium-navigator',
-			'titanium-vdom',
-			...(opts.external || [])
-		],
+		external: opts.external,
 		plugins: [
 			replace({
 				__WEEX__: false,
@@ -80,8 +78,10 @@ function genConfig (name) {
 			}),
 			flow(),
 			babel(),
+			node(),
+			cjs(),
 			alias(Object.assign({}, aliases, opts.alias))
-		].concat(opts.plugins || []),
+		],
 		output: {
 			file: opts.dest,
 			format: opts.format,

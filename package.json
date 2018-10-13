@@ -29,25 +29,23 @@
     "url": "https://github.com/appcelerator/titanium-vue/issues"
   },
   "homepage": "https://github.com/appcelerator/titanium-vue#readme",
-  "peerDependencies": {
-    "titanium-navigator": "*",
-    "titanium-vdom": "*"
-  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-external-helpers": "^6.22.0",
-    "babel-preset-env": "^1.6.0",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-flow-vue": "^1.0.0",
-    "eslint": "^5.2.0",
-    "eslint-config-axway": "^2.0.14",
-    "rollup": "^0.58.2",
+    "eslint": "^5.6.1",
+    "eslint-config-axway": "^4.0.0",
+    "rollup": "^0.66.4",
     "rollup-plugin-alias": "^1.4.0",
     "rollup-plugin-babel": "^3.0.4",
+    "rollup-plugin-commonjs": "^9.1.8",
     "rollup-plugin-flow-no-whitespace": "^1.0.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-replace": "^2.0.0",
     "rollup-watch": "^4.3.1",
-    "titanium-navigator": "file:../titanium-navigator",
-    "titanium-vdom": "file:../titanium-vdom",
-    "vue": "^2.5.16"
+    "titanium-navigator": "^0.1.1",
+    "titanium-vdom": "^0.3.1",
+    "vue": "^2.5.17"
   }
 }
