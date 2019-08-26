@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue from 'core/index';
 import { mountComponent } from 'core/instance/lifecycle.js';
 import { EmulatedRootElement, ElementNode } from 'titanium-vdom';
 

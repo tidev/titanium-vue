@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue from 'core/index';
 
 import ReuseRoute from './reuse-route';
 

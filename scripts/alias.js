@@ -3,7 +3,6 @@ const path = require('path');
 const resolve = subModulePath => path.resolve(__dirname, '..', 'node_modules', 'vue', subModulePath) + '/';
 
 module.exports = {
-	vue: resolve('src/core/index'),
 	compiler: resolve('src/compiler'),
 	core: resolve('src/core'),
 	shared: resolve('src/shared'),
