@@ -65,6 +65,9 @@ function wrap(context, originalFunction, beforeFunction) {
 
 export default {
 	install(Vue) {
+		const strats = Vue.config.optionMergeStrategies;
+		strats.beforeRouteEnter = strats.created;
+
 		Vue.mixin({
 			beforeCreate() {
 				if (this.$options.router && this.$options.router.options.windowRouting) {
