@@ -67,7 +67,11 @@ function genConfig (name) {
 	const opts = builds[name];
 	const config = {
 		input: opts.entry,
-		external: opts.external,
+		external: [
+			'titanium-navigator',
+			'titanium-vdom',
+			...(opts.external || [])
+		],
 		plugins: [
 			replace({
 				__WEEX__: false,

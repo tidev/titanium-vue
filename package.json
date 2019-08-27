@@ -29,6 +29,10 @@
     "url": "https://github.com/appcelerator/titanium-vue/issues"
   },
   "homepage": "https://github.com/appcelerator/titanium-vue#readme",
+  "dependencies": {
+    "titanium-navigator": "^0.2.0",
+    "titanium-vdom": "^0.3.2"
+  },
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
@@ -44,8 +48,6 @@
     "rollup-plugin-flow-no-whitespace": "^1.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.0.0",
-    "titanium-navigator": "^0.1.1",
-    "titanium-vdom": "^0.3.2",
     "vue": "^2.6.10"
   }
 }
